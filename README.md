@@ -1,32 +1,29 @@
-# Python Learning Repository
+# AI Engineering Lab
 
-沈乐的 Python 学习代码仓库。
+Python × AI 工程实践仓库，记录 LLM 应用、RAG 检索增强、Agent 工具调用与课程实验代码。
 
-## 简介
+## 目录
 
-这是一个用于记录 Python 学习过程的仓库，包含各种练习代码和项目。
+| 路径 | 内容 |
+| --- | --- |
+| `python_summit二期_day01/` | 本地 Qwen 模型部署与 RAG 示例（Ollama + ModelScope） |
 
-## 学习内容
+## 规划中的内容
 
-- Python 基础语法
-- 数据结构与算法
-- Web 开发
-- 数据分析
-- 等等...
+- Python 工程化与数据处理
+- LLM 推理与提示工程
+- RAG 与向量检索
+- Agent 与工具调用
+- 模型微调与评测
 
-## 如何使用
+## 环境
+
+- Python 3.10+
+- Ollama（本地模型推理）
+
+## 使用
 
 ```bash
-# 克隆仓库
-git clone https://github.com/shenle2019/python-learning.git
-
-# 添加文件
-git add .
-git commit -m "描述"
-git push
+git clone https://github.com/shenle2019/ai-engineering-lab.git
+cd ai-engineering-lab
 ```
-
-## 联系方式
-
-- GitHub: https://github.com/shenle2019
-- Email: 305030951@qq.com
