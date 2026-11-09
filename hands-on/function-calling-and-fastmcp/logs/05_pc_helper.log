@@ -1,0 +1,46 @@
+17:33:37 [INFO] ========================================================================
+17:33:37 [INFO] 阶段 05 AI PC 助手：文件整理
+17:33:37 [INFO] ========================================================================
+17:33:37 [INFO] 沙箱目录：C:\Users\ADMINI~1\AppData\Local\Temp\pc_helper_t6i406ux
+17:33:40 [INFO] ---- 1. 列出目录文件
+17:33:40 [INFO] 目录：C:\Users\Administrator\AppData\Local\Temp\pc_helper_t6i406ux
+文件名                                     类型        大小          字节
+README                                  无         6 B         6
+备份.docx                                 docx      11 B        11
+截图.png                                  png       8 B         8
+报告.docx                                 docx      9 B         9
+笔记.md                                   md        6 B         6
+预算表.xlsx                                xlsx      9 B         9
+17:33:40 [INFO] 
+17:33:40 [INFO] ---- 2. 按扩展名整理
+17:33:40 [INFO] 整理完成：移动 6 个，跳过 0 个，共 6 个文件。
+移动：备份.docx -> 20261109_docx/
+移动：报告.docx -> 20261109_docx/
+移动：笔记.md -> 20261109_md/
+移动：README -> 20261109_no_ext/
+移动：截图.png -> 20261109_png/
+移动：预算表.xlsx -> 20261109_xlsx/
+17:33:40 [INFO] 生成子文件夹：['20261109_docx', '20261109_md', '20261109_no_ext', '20261109_png', '20261109_xlsx']
+17:33:40 [INFO]   20261109_docx/ -> ['备份.docx', '报告.docx']
+17:33:40 [INFO]   20261109_md/ -> ['笔记.md']
+17:33:40 [INFO]   20261109_no_ext/ -> ['README']
+17:33:40 [INFO]   20261109_png/ -> ['截图.png']
+17:33:40 [INFO]   20261109_xlsx/ -> ['预算表.xlsx']
+17:33:40 [INFO] 
+17:33:40 [INFO] ---- 3. 再整理一次（幂等性 / 不覆盖）
+17:33:40 [INFO] 目录 C:\Users\Administrator\AppData\Local\Temp\pc_helper_t6i406ux 下没有文件需要整理。
+17:33:40 [INFO] 
+17:33:40 [INFO] ---- 4. 安全边界：系统目录
+17:33:40 [INFO] 错误：拒绝操作系统目录：C:\Windows（安全边界）
+17:33:40 [INFO] 
+17:33:40 [INFO] ---- 5. 不存在路径
+17:33:40 [INFO] 错误：路径不存在：C:\Users\Administrator\AppData\Local\Temp\pc_helper_t6i406ux\nope
+17:33:40 [INFO] 检查项 list_files   通过
+17:33:40 [INFO] 检查项 organize     通过
+17:33:40 [INFO] 检查项 folders      通过
+17:33:40 [INFO] 检查项 idempotent   通过
+17:33:40 [INFO] 检查项 deny_system  通过
+17:33:40 [INFO] 检查项 bad_path     通过
+17:33:40 [INFO] 沙箱已清理：True
+17:33:40 [INFO] 
+17:33:40 [INFO] 阶段 05 全部通过

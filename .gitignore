@@ -41,3 +41,6 @@ Thumbs.db
 *.log
 # 例外：hands-on 下各实操的运行日志作为验证证据保留
 !hands-on/*/logs/*.log
+# 例外：hands-on 下各实操自建的 lib/ 源码包（上面的 lib/ 规则针对 Python 构建产物）
+!hands-on/*/lib/
+!hands-on/*/lib/*.py

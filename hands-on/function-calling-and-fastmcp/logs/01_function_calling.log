@@ -1,0 +1,105 @@
+17:24:39 [INFO] ========================================================================
+17:24:39 [INFO] 阶段 01 Function Calling 七步流程
+17:24:39 [INFO] ========================================================================
+17:24:40 [INFO] LLM 模式：真实调用 deepseek-chat
+17:24:40 [INFO] 
+17:24:40 [INFO] >>> 用户：贵州茅台现在股价多少？市盈率和总市值呢？
+17:24:41 [INFO] 模型第一次返回 1 个 tool_call：
+17:24:41 [INFO]   - id=call_00_KXArpcrMt4IOf63CQ0z81629  name=get_number  arguments={"name": "贵州茅台"}
+17:24:41 [INFO]   反射调用：get_number({'name': '贵州茅台'})
+17:24:41 [INFO]   工具返回（前 120 字）：600519
+17:24:42 [INFO] >>> 模型最终回答：
+    
+    <｜｜DSML｜｜ calls>
+    <｜｜DSML｜｜ invoke name="get_stock_info">
+    <｜｜DSML｜｜ parameter name="code" string="true">600519</｜｜DSML｜｜ parameter>
+    </｜｜DSML｜｜ invoke>
+    </｜｜DSML｜｜ calls>
+17:24:42 [INFO] 
+17:24:42 [INFO] >>> 用户：那宁德时代呢？只要最新价和涨跌幅。
+17:24:43 [INFO] 模型第一次返回 1 个 tool_call：
+17:24:43 [INFO]   - id=call_00_HFDpJAQLydtQe3AE6XE16022  name=get_number  arguments={"name": "宁德时代"}
+17:24:43 [INFO]   反射调用：get_number({'name': '宁德时代'})
+17:24:43 [INFO]   工具返回（前 120 字）：300750
+17:24:44 [INFO] >>> 模型最终回答：
+    
+    <｜｜DSML｜｜ calls>
+    <｜｜DSML｜｜ invoke name="get_stock_info">
+    <｜｜DSML｜｜ parameter name="code" string="true">300750</｜｜DSML｜｜ parameter>
+    </｜｜DSML｜｜ invoke>
+    </｜｜DSML｜｜ calls>
+17:24:44 [INFO] 
+17:24:44 [INFO] ---- 反例验证：漏掉 assistant 的 tool_calls 消息 ----
+17:24:44 [INFO] [OK] 模型按预期拒绝：Error code: 400 - Messages with role 'tool' must be a response to a preceding message with 'tool_calls' (request_id: 697d6285-009a-4979-ac63-4f820dbf29e1)
+17:24:44 [INFO] [OK] 反例验证成立：tool_call_id 对应的 assistant 消息缺失时请求失败
+17:24:44 [INFO] 
+17:24:44 [INFO] 最终 messages 角色序列：
+17:24:44 [INFO]   [0] system    | 你是股票助手。查询实时行情必须调用工具，不要凭记忆回答；如果用户只给了公司名，先用 get_number 查代码再查行情
+17:24:44 [INFO]   [1] user      | 贵州茅台现在股价多少？市盈率和总市值呢？
+17:24:44 [INFO]   [2] assistant tool_calls=['get_number'] | 
+17:24:44 [INFO]   [3] tool      tool_call_id=call_00_KXArpcrMt4IOf63CQ0z81629 | 600519
+17:24:44 [INFO]   [4] assistant |   <｜｜DSML｜｜ calls> <｜｜DSML｜｜ invoke name="get_stock_info"> <
+17:24:44 [INFO]   [5] user      | 那宁德时代呢？只要最新价和涨跌幅。
+17:24:44 [INFO]   [6] assistant tool_calls=['get_number'] | 
+17:24:44 [INFO]   [7] tool      tool_call_id=call_00_HFDpJAQLydtQe3AE6XE16022 | 300750
+17:24:44 [INFO]   [8] assistant |   <｜｜DSML｜｜ calls> <｜｜DSML｜｜ invoke name="get_stock_info"> <
+17:24:44 [INFO] 最终答案1：  <｜｜DSML｜｜ calls> <｜｜DSML｜｜ invoke name="get_stock_info"> <｜｜DSML｜｜ parameter name="code" string="true">600519</｜｜DSML｜｜ parameter> </｜｜DSML｜｜ invoke
+17:24:44 [INFO] 最终答案2：  <｜｜DSML｜｜ calls> <｜｜DSML｜｜ invoke name="get_stock_info"> <｜｜DSML｜｜ parameter name="code" string="true">300750</｜｜DSML｜｜ parameter> </｜｜DSML｜｜ invoke
+17:24:44 [INFO] 阶段 01 完成
+17:25:53 [INFO] ========================================================================
+17:25:53 [INFO] 阶段 01 Function Calling 七步流程
+17:25:53 [INFO] ========================================================================
+17:25:53 [INFO] LLM 模式：真实调用 deepseek-chat
+17:25:53 [INFO] 
+17:25:53 [INFO] >>> 用户：贵州茅台现在股价多少？市盈率和总市值呢？
+17:25:54 [INFO] 第 1 跳：模型返回 1 个 tool_call
+17:25:54 [INFO]   - id=call_00_Khk04LD6HmItQpOdBv4O2965  name=get_number  arguments={"name": "贵州茅台"}
+17:25:54 [INFO]   反射调用：get_number({'name': '贵州茅台'}) -> 600519
+17:25:55 [INFO] 第 2 跳：模型返回 1 个 tool_call
+17:25:55 [INFO]   - id=call_00_L64wh8AHKpK24ii31PAS9288  name=get_stock_info  arguments={"code": "600519"}
+17:25:55 [INFO]   反射调用：get_stock_info({'code': '600519'}) -> 贵州茅台(600519) | 最新价: 1444.99 元（昨收 1453.0 元） | 涨跌: -8.01 元 / -0.55% | 市盈率(动态): 21.01，PE(TTM): 21.99 | 市净率: 6.6
+17:25:56 [INFO] >>> 第 3 跳：模型不再调工具，最终回答：
+17:25:56 [INFO]     贵州茅台（600519）实时行情：
+    
+    - 最新价：**1444.99 元**，较昨收 1453.00 元下跌 8.01 元，跌幅 **-0.55%**
+    - 市盈率：动态 **21.01**，TTM **21.99**
+    - 市净率：6.66
+    - 总市值：**18063.55 亿元**
+    - 换手率：0.2%
+    
+    数据来自东方财富公开接口，仅供参考，不构成投资建议。
+17:25:56 [INFO] 
+17:25:56 [INFO] >>> 用户：那宁德时代呢？只要最新价和涨跌幅。
+17:25:57 [INFO] 第 1 跳：模型返回 1 个 tool_call
+17:25:57 [INFO]   - id=call_00_TUz74mDsT5Lb3eLh2PPB2648  name=get_number  arguments={"name": "宁德时代"}
+17:25:57 [INFO]   反射调用：get_number({'name': '宁德时代'}) -> 300750
+17:25:58 [INFO] 第 2 跳：模型返回 1 个 tool_call
+17:25:58 [INFO]   - id=call_00_GtcyzzLcOpzpp7nDvfkD8189  name=get_stock_info  arguments={"code": "300750"}
+17:25:59 [INFO]   反射调用：get_stock_info({'code': '300750'}) -> 宁德时代(300750) | 最新价: 248.64 元（昨收 254.22 元） | 涨跌: -5.58 元 / -2.19% | 市盈率(动态): 13.37，PE(TTM): 13.12 | 市净率: 2.97
+17:26:00 [INFO] >>> 第 3 跳：模型不再调工具，最终回答：
+17:26:00 [INFO]     宁德时代（300750）：
+    
+    - 最新价：**248.64 元**
+    - 涨跌幅：**-2.19%**（-5.58 元）
+17:26:00 [INFO] 
+17:26:00 [INFO] ---- 反例验证：漏掉 assistant 的 tool_calls 消息 ----
+17:26:00 [INFO] [OK] 模型按预期拒绝：Error code: 400 - Messages with role 'tool' must be a response to a preceding message with 'tool_calls' (request_id: 46381c1e-5b87-4ef6-b078-7f2293c1ea71)
+17:26:00 [INFO] [OK] 反例验证成立：tool_call_id 对应的 assistant 消息缺失时请求失败
+17:26:00 [INFO] 
+17:26:00 [INFO] 最终 messages 角色序列：
+17:26:00 [INFO]   [0] system    | 你是股票助手。查询实时行情必须调用工具，不要凭记忆回答；如果用户只给了公司名，先用 get_number 查代码再查行情
+17:26:00 [INFO]   [1] user      | 贵州茅台现在股价多少？市盈率和总市值呢？
+17:26:00 [INFO]   [2] assistant tool_calls=['get_number'] | 
+17:26:00 [INFO]   [3] tool      tool_call_id=call_00_Khk04LD6HmItQpOdBv4O2965 | 600519
+17:26:00 [INFO]   [4] assistant tool_calls=['get_stock_info'] | 
+17:26:00 [INFO]   [5] tool      tool_call_id=call_00_L64wh8AHKpK24ii31PAS9288 | 贵州茅台(600519) 最新价: 1444.99 元（昨收 1453.0 元） 涨跌: -8.01 元 / -0.55
+17:26:00 [INFO]   [6] assistant | 贵州茅台（600519）实时行情：  - 最新价：**1444.99 元**，较昨收 1453.00 元下跌 8.01 
+17:26:00 [INFO]   [7] user      | 那宁德时代呢？只要最新价和涨跌幅。
+17:26:00 [INFO]   [8] assistant tool_calls=['get_number'] | 
+17:26:00 [INFO]   [9] tool      tool_call_id=call_00_TUz74mDsT5Lb3eLh2PPB2648 | 300750
+17:26:00 [INFO]   [10] assistant tool_calls=['get_stock_info'] | 
+17:26:00 [INFO]   [11] tool      tool_call_id=call_00_GtcyzzLcOpzpp7nDvfkD8189 | 宁德时代(300750) 最新价: 248.64 元（昨收 254.22 元） 涨跌: -5.58 元 / -2.19%
+17:26:00 [INFO]   [12] assistant | 宁德时代（300750）：  - 最新价：**248.64 元** - 涨跌幅：**-2.19%**（-5.58 元）
+17:26:00 [INFO] 最终答案1：贵州茅台（600519）实时行情：  - 最新价：**1444.99 元**，较昨收 1453.00 元下跌 8.01 元，跌幅 **-0.55%** - 市盈率：动态 **21.01**，TTM **21.99** - 市净率：6.66 - 总市值：**18063.55 亿元** - 换手率：0.
+17:26:00 [INFO] 最终答案2：宁德时代（300750）：  - 最新价：**248.64 元** - 涨跌幅：**-2.19%**（-5.58 元）
+17:26:00 [INFO] 阶段 01 完成

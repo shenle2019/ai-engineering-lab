@@ -1,0 +1,24 @@
+17:26:43 [INFO] ========================================================================
+17:26:43 [INFO] 阶段 03 MCP server：两种传输方式
+17:26:43 [INFO] ========================================================================
+17:26:43 [INFO] ---- 方式一：stdio（客户端拉起子进程，零网络） ----
+17:26:47 [INFO] list_tools 自动拿到 2 个工具：
+17:26:47 [INFO]   - get_number：通过公司中文名查询 6 位股票代码，例如 贵州茅台 -> 600519
+17:26:47 [INFO]     inputSchema={'properties': {'name': {'type': 'string'}}, 'required': ['name'], 'type': 'object'}
+17:26:47 [INFO]   - get_stock_info：根据 6 位股票代码查询 A 股实时行情：最新价、涨跌幅、市盈率、市净率、总市值
+17:26:47 [INFO]     inputSchema={'properties': {'code': {'type': 'string'}}, 'required': ['code'], 'type': 'object'}
+17:26:47 [INFO] call_tool get_number -> 600519
+17:26:47 [INFO] call_tool get_stock_info -> 贵州茅台(600519) | 最新价: 1444.99 元（昨收 1453.0 元） | 涨跌: -8.01 元 / -0.55% | 市盈率(动态): 21.01，PE(TTM): 21.99 | 市净率: 6.66，换手率: 0.2% | 总市值: 18063.55 亿元 | 行情数据来自东方财富公开接口，仅供参考，不构成投资建议。
+17:26:47 [INFO] 
+17:26:47 [INFO] ---- 方式二：Streamable HTTP（单端点 /mcp） ----
+17:26:51 [INFO] server 已监听 127.0.0.1:8765
+17:26:51 [INFO] HTTP 客户端 list_tools -> ['get_number', 'get_stock_info']
+17:26:51 [INFO] call_tool get_stock_info(300750) -> 宁德时代(300750) | 最新价: 248.64 元（昨收 254.22 元） | 涨跌: -5.58 元 / -2.19% | 市盈率(动态): 13.37，PE(TTM): 13.12 | 市净率: 2.97，换手率: 1.02% | 总市值: 11505.19 亿元 | 行情数据来自东方财富公开接口，仅供参考
+17:26:51 [INFO] 普通 GET /mcp 返回 HTTP 406（4xx/5xx 即符合预期：MCP 端点不认普通请求）
+17:26:51 [INFO] server stderr: INFO:     Application startup complete.
+17:26:51 [INFO] server stderr: INFO:     Uvicorn running on http://127.0.0.1:8765 (Press CTRL+C to quit)
+17:26:51 [INFO] server stderr: [middleware] 2026-11-09T17:26:51 initialize 0.001s
+17:26:51 [INFO] server stderr: [middleware] 2026-11-09T17:26:51 tools/list 0.000s
+17:26:51 [INFO] server stderr: [middleware] 2026-11-09T17:26:51 tools/call 0.428s
+17:26:51 [INFO] 
+17:26:51 [INFO] 阶段 03 stdio=通过 http=通过
