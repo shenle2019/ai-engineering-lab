@@ -12,8 +12,8 @@ Python 山顶会三期的学习仓库：**课件笔记** + **实操复刻记录*
 | 环境基础 | 预习1 | Linux 入门操作（命令、权限、软硬链接、vim、服务、进程） | Linux与Docker容器化基础.md | linux-docker-compose-deploy |
 | 环境基础 | 预习2 | Docker 从入门到精通（镜像、容器、Dockerfile、迁移备份） | 同上 | 同上 |
 | 环境基础 | 预习3 | Docker Compose 详解（服务、项目、多容器编排） | 同上 | 同上 |
-| 工具调用 | day01 | Function Calling 之 AI 股票小助手和 MCP | 待做 | 待做 |
-| 工具调用 | day02 | FastMCP 从入门到精通 | 待做 | 待做 |
+| 工具调用 | day01 | Function Calling 之 AI 股票小助手和 MCP | FunctionCalling与FastMCP-MCP协议与服务端开发.md | 待做 |
+| 工具调用 | day02 | FastMCP 从入门到精通 | 同上 | 待做 |
 | LangChain | day03 | LangChain v1.2.9 核心组件之 Agents 和 Models | 待做 | 待做 |
 | LangChain | day04 | LangChain 核心之 Models 模型和 Messages 消息 | 待做 | 待做 |
 | LangChain | day05 | LangChain 结构化输出和流式输出 | 待做 | 待做 |
@@ -37,6 +37,7 @@ Python 山顶会三期的学习仓库：**课件笔记** + **实操复刻记录*
 | 文件 | 覆盖内容 |
 | --- | --- |
 | [notes/Linux与Docker容器化基础.md](notes/Linux与Docker容器化基础.md) | 预习1–3：Linux 发行版与常用命令、权限与链接、vim、systemd、进程；Docker 镜像/容器/数据卷/Dockerfile；Compose 服务编排 |
+| [notes/FunctionCalling与FastMCP-MCP协议与服务端开发.md](notes/FunctionCalling与FastMCP-MCP协议与服务端开发.md) | day01–day02：Function Calling 七步流程与 tools 说明书、反射调用与二次请求消息结构；MCP 架构与三种传输方式（Streamable HTTP / stdio / SSE 弃用）、生态入口、12306 server 部署；FastMCP 三大组件 Tool/Resource/Prompt、中间件、三种客户端接入；AI 股票小助手（东方财富接口）与 AI PC 助手（注册表读软件）两个案例 |
 
 ### 实操
 
