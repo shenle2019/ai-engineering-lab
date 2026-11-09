@@ -1,0 +1,72 @@
+
+===== 0 清理历史容器与卷 =====
+clean done
+
+===== 1 准备镜像 =====
+Status: Image is up to date for nginx:alpine
+docker.io/library/nginx:alpine
+
+===== 2 启动 redis（命名卷 redis_data + 端口映射） =====
+aacd6762ea860c840cd2a9a399b17fce84351870a0f8a41bcbeee1456d81ec7d
+lab-redis Up 4 seconds 0.0.0.0:6379->6379/tcp, [::]:6379->6379/tcp
+
+===== 3 写入数据并读取 =====
+OK
+OK
+luffycity
+--- KEYS *
+visits
+site
+
+===== 4 删除容器后重建，验证命名卷数据仍在 =====
+容器已删除，卷列表：
+lab_compose_redis_data local
+redis_data local
+65130d2349af75be133e439fe18459f0d60d74a19806f7ef4373c31e3fa6acd6
+--- 重建后 GET site
+luffycity
+--- 重建后 GET visits
+1
+
+===== 5 写入宿主机 html 并启动 nginx（目录映射 + 只读） =====
+899839c30d83565af1b3e11257714d5ca3242fe04dc9ccb5ae0fa7a0155e727a
+--- curl http://localhost:8080
+<h1>hello from nginx container</h1>
+<p>mounted from /opt/lab/stage01/html</p>
+
+===== 6 改宿主机文件，容器内立即生效（目录映射的意义） =====
+--- 再次 curl
+<h1>hello from nginx container</h1>
+<p>mounted from /opt/lab/stage01/html</p>
+<p>hot update by host</p>
+
+===== 7 运维常用：logs / exec / inspect / stats =====
+2026/11/09 08:56:52 [notice] 1#1: start worker process 46
+172.17.0.1 - - [09/Nov/2026:08:56:55 +0000] "GET / HTTP/1.1" 200 78 "-" "curl/8.5.0" "-"
+172.17.0.1 - - [09/Nov/2026:08:56:55 +0000] "GET / HTTP/1.1" 200 104 "-" "curl/8.5.0" "-"
+--- 容器内看目录
+index.html
+--- 端口映射
+80/tcp -> 0.0.0.0:8080
+80/tcp -> [::]:8080
+--- IP 地址
+172.17.0.3
+--- 资源占用(一次性)
+lab-nginx cpu=0.00% mem=16.52MiB / 7.461GiB
+lab-redis cpu=0.45% mem=4.848MiB / 7.461GiB
+
+===== 8 镜像与容器清单 =====
+lab-snapshot:1.0 12.1MB
+lab-compose-web:latest 205MB
+lab-entrytest:latest 12.1MB
+lab-cmdtest:latest 12.1MB
+lab-argtest:latest 12.1MB
+lab-web:1.0 205MB
+nginx:alpine 94.5MB
+redis:7-alpine 57.8MB
+python:3.12-slim 180MB
+alpine:3.20 12.2MB
+lab-nginx	nginx:alpine	0.0.0.0:8080->80/tcp, [::]:8080->80/tcp
+lab-redis	redis:7-alpine	0.0.0.0:6379->6379/tcp, [::]:6379->6379/tcp
+
+===== DONE stage01 =====

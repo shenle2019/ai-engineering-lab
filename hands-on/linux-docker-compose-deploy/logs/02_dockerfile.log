@@ -1,0 +1,86 @@
+
+===== 0 清理 =====
+clean done
+
+===== 1 拷贝上下文并构建镜像 lab-web:1.0 =====
+ ---> 06bdef3d0125
+Step 7/9 : ENV REDIS_HOST=redis     REDIS_PORT=6379
+ ---> Using cache
+ ---> 1bf4f1eda1b3
+Step 8/9 : EXPOSE 5000
+ ---> Using cache
+ ---> 1b685fe2ee15
+Step 9/9 : CMD ["python", "app.py"]
+ ---> Using cache
+ ---> f08d3ac87689
+Successfully built f08d3ac87689
+Successfully tagged lab-web:1.0
+
+===== 2 镜像信息 =====
+lab-web:1.0 205MB
+--- 分层（docker history）
+/bin/sh -c #(nop)  CMD ["python" "app.py"] | 0B
+/bin/sh -c #(nop)  EXPOSE 5000 | 0B
+/bin/sh -c #(nop)  ENV REDIS_HOST=redis REDI… | 0B
+/bin/sh -c #(nop) COPY file:89afd03f23554d62… | 12.3kB
+/bin/sh -c pip install --no-cache-dir -r req… | 21.5MB
+/bin/sh -c #(nop) COPY file:8ce13baff2ae9a90… | 12.3kB
+/bin/sh -c #(nop) WORKDIR /app | 8.19kB
+/bin/sh -c #(nop)  LABEL maintainer=luffy-lab | 0B
+CMD ["python3"] | 0B
+RUN /bin/sh -c set -eux;  for src in idle3 p… | 16.4kB
+RUN /bin/sh -c set -eux;   savedAptMark="$(a… | 41.4MB
+ENV PYTHON_SHA256=b5796915dc45ff745cfb4e990a… | 0B
+ENV PYTHON_VERSION=3.12.16 | 0B
+ENV GPG_KEY=7169605F62C751356D054A26A821E680… | 0B
+RUN /bin/sh -c set -eux;  apt-get update;  a… | 4.93MB
+ENV LANG=C.UTF-8 | 0B
+ENV PATH=/usr/local/bin:/usr/local/sbin:/usr… | 0B
+# debian.sh --arch 'amd64' out/ 'trixie' '@1… | 87.7MB
+
+===== 3 自定义网络 + redis + web（服务名通信） =====
+lab-web	Up 6 seconds	0.0.0.0:5000->5000/tcp, [::]:5000->5000/tcp
+lab-cache	Up 6 seconds	6379/tcp
+lab-nginx	Up 14 seconds	0.0.0.0:8080->80/tcp, [::]:8080->80/tcp
+lab-redis	Up 19 seconds	0.0.0.0:6379->6379/tcp, [::]:6379->6379/tcp
+
+===== 4 访问计数三次，验证 redis 在容器间被共享 =====
+--- 第 1 次访问
+<h1>你是第 1 个访问者</h1>
+--- 第 2 次访问
+<h1>你是第 2 个访问者</h1>
+--- 第 3 次访问
+<h1>你是第 3 个访问者</h1>
+--- /health
+{"redis":true,"status":"ok"}
+
+
+===== 5 CMD vs ENTRYPOINT =====
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+--- 只跑 CMD 镜像（用默认 CMD）
+default-cmd
+--- 传入 echo override-cmd（覆盖 CMD）
+override-cmd
+--- ENTRYPOINT 镜像 + 参数 arg1
+entry arg1
+--- --entrypoint 覆盖 ENTRYPOINT
+hi
+
+===== 6 ARG vs ENV =====
+Step 4/4 : RUN echo "build-time sees BUILD_ARG=$BUILD_ARG"
+--- 运行时 env
+RUN_ENV=env-value
+--- 运行时读 BUILD_ARG（应为空，ARG 只在构建期存在）
+runtime BUILD_ARG=[]
+
+===== 7 清理实验容器 =====
+done
+
+===== DONE stage02 =====

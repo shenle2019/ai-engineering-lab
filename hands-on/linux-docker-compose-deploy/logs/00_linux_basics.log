@@ -1,0 +1,88 @@
+
+===== 0 环境信息 =====
+Linux localhost 6.18.54.1-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Tue Oct  6 19:13:07 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux
+PRETTY_NAME="Ubuntu 24.04.5 LTS"
+NAME="Ubuntu"
+current user: root uid=0
+
+===== 1.1 文件操作 cat / tail / grep =====
+--- cat lqz.txt
+line1
+line2
+line3
+--- tail -n 2 lqz.txt
+line2
+line3
+--- grep line2 lqz.txt
+line2
+--- grep -c . lqz.txt
+3
+
+===== 1.2 下载 wget / curl =====
+--- curl -sI
+HTTP/2 200 
+--- wget 下载小文件
+18 sha.txt
+
+===== 1.3 文件属性 10 位 =====
+-rw-r--r-- 1 root root 18 Nov  9 16:56 lqz.txt
+mode=644 owner=root group=root size=18
+
+===== 2 权限 chmod / umask / chown =====
+-rw-r----- 1 root root 0 Nov  9 16:56 perm.txt
+umask=0022
+drwxr-x--- 2 root root 4096 Nov  9 16:56 shared
+
+===== 3 软硬链接 =====
+--- inode 与链接数
+12603 -rw-r--r-- 2 root root  6 Nov  9 16:56 hard.txt
+12603 -rw-r--r-- 2 root root  6 Nov  9 16:56 origin.txt
+12604 lrwxrwxrwx 1 root root 10 Nov  9 16:56 soft.txt -> origin.txt
+修改源文件 >> origin.txt
+--- hard.txt 内容
+hello
+modify-by-origin
+--- soft.txt 内容
+hello
+modify-by-origin
+--- 删除源文件后 hard.txt 仍可读
+hello
+modify-by-origin
+--- 删除源文件后 soft.txt 变成断链
+cat: soft.txt: No such file or directory
+readlink soft.txt -> origin.txt (dangling)
+
+===== 4 用户与属主 =====
+uid=1000(luffy) gid=1000(luffy) groups=1000(luffy)
+-rw-r----- 1 luffy luffy 0 Nov  9 16:56 perm.txt
+
+===== 5 压缩解压 tar =====
+--- 查看包内
+lqz.txt
+perm.txt
+--- 解压结果
+lqz.txt
+perm.txt
+
+===== 6 系统服务 systemctl =====
+active
+● docker.service - Docker Application Container Engine
+     Loaded: loaded (/usr/lib/systemd/system/docker.service; enabled; preset: enabled)
+     Active: active (running) since Mon 2026-11-09 16:56:26 CST; 13s ago
+TriggeredBy: ● docker.socket
+       Docs: https://docs.docker.com
+   Main PID: 125 (dockerd)
+      Tasks: 18
+     Memory: 117.4M (peak: 117.5M)
+
+===== 7 进程管理 ps / pgrep =====
+root         125  2.9  1.1 2573692 89756 ?       Ssl  16:56   0:00 /usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
+dockerd pid: 125
+
+===== 8 vim 非交互验证 =====
+hello from vim
+
+===== 9 Docker 版本（为阶段01准备） =====
+client=29.1.3 server=29.1.3
+
+===== DONE stage00 =====

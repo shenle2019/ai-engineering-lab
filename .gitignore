@@ -39,3 +39,5 @@ Thumbs.db
 
 # Logs
 *.log
+# 例外：hands-on 下各实操的运行日志作为验证证据保留
+!hands-on/*/logs/*.log

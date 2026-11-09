@@ -1,0 +1,45 @@
+
+===== 0 清理 =====
+clean done
+
+===== 1 起一个基础容器，在里面改东西 =====
+--- 容器内改动
+snapshot-marker
+uid=1000(appuser) gid=1000(appuser) groups=1000(appuser)
+
+===== 2 commit 把容器固化成镜像 =====
+sha256:2e54505b2950a3af4d0cd2bc550683e1ea769c67ba951eb54a6252a716761878
+lab-snapshot:1.0 12.2MB
+
+===== 3 新镜像直接运行，确认改动被带上 =====
+snapshot-marker
+
+===== 4 save 导出为 tar（离线迁移用） =====
+3.5M /tmp/lab-snapshot.tar
+--- tar 内层结构
+blobs/
+blobs/sha256/
+blobs/sha256/018d3446e797f9493cffe865832ff9f48ba68f8e5c0612403ee17e55d2e56b83
+blobs/sha256/25f1d6b1951ac8eb3740558fe94cb83d377bdadf95fd9f98b50d2e1b96130471
+blobs/sha256/2e54505b2950a3af4d0cd2bc550683e1ea769c67ba951eb54a6252a716761878
+blobs/sha256/5b1add96f04300a043630e3e856a1270c124f33ba8b51a5025a4b36b6fec66f4
+
+===== 5 删除本地镜像，模拟目标机器没有该镜像 =====
+0
+
+===== 6 load 从 tar 恢复镜像 =====
+Loaded image: lab-snapshot:1.0
+lab-snapshot:1.0 12.1MB
+
+===== 7 恢复后运行验证 =====
+snapshot-marker
+
+===== 8 业务镜像同样可以整体迁移（lab-web:1.0） =====
+--- lab-web tar 大小
+48M
+Loaded image: lab-web:1.0
+
+===== 9 清理临时文件与容器 =====
+cleaned
+
+===== DONE stage04 =====

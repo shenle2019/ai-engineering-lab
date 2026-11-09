@@ -1,0 +1,67 @@
+
+===== 0 清理历史编排 =====
+clean done
+
+===== 1 拷贝上下文（app + compose）到项目目录 =====
+./docker-compose.yml
+./nginx/default.conf
+
+===== 2 校验 compose 文件 =====
+compose config OK
+
+===== 3 一键构建并启动（--build） =====
+ Container lab-compose-redis  Starting
+ Container lab-compose-redis  Started
+ Container lab-compose-redis  Waiting
+ Container lab-compose-redis  Healthy
+ Container lab-compose-web  Starting
+ Container lab-compose-web  Started
+ Container lab-compose-nginx  Starting
+ Container lab-compose-nginx  Started
+NAME                IMAGE             COMMAND                  SERVICE   CREATED          STATUS                    PORTS
+lab-compose-nginx   nginx:alpine      "/docker-entrypoint.…"   nginx     15 seconds ago   Up 8 seconds              0.0.0.0:8088->80/tcp, [::]:8088->80/tcp
+lab-compose-redis   redis:7-alpine    "docker-entrypoint.s…"   redis     15 seconds ago   Up 14 seconds (healthy)   6379/tcp
+lab-compose-web     lab-compose-web   "python app.py"          web       15 seconds ago   Up 8 seconds              5000/tcp
+
+===== 4 经 nginx 反代访问三次，验证服务名通信与计数 =====
+--- 第 1 次（curl http://localhost:8088/  ->  nginx -> web -> redis）
+<h1>你是第 1 个访问者</h1>
+--- 第 2 次（curl http://localhost:8088/  ->  nginx -> web -> redis）
+<h1>你是第 2 个访问者</h1>
+--- 第 3 次（curl http://localhost:8088/  ->  nginx -> web -> redis）
+<h1>你是第 3 个访问者</h1>
+
+===== 5 直接进容器验证内部链路 =====
+--- web 容器解析 redis 主机名
+redis -> 172.20.0.2
+--- redis 里的计数
+3
+--- nginx 配置里的 upstream
+        proxy_pass http://web:5000;
+
+===== 6 依赖顺序：redis healthcheck 通过后 web 才启动 =====
+health=healthy
+lab-compose-nginx	Up 10 seconds
+lab-compose-redis	Up 16 seconds (healthy)
+lab-compose-web	Up 10 seconds
+
+===== 7 重启编排（down 保留卷），验证计数未丢 =====
+--- 重启后计数
+<h1>你是第 4 个访问者</h1>
+--- redis 卷内容
+4
+--- 卷存在性
+lab_compose_redis_data
+
+===== 8 日志汇总 =====
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.20.0.3:5000
+[33mPress CTRL+C to quit[0m
+172.20.0.4 - - [09/Nov/2026 08:57:54] "GET / HTTP/1.1" 200 -
+2026/11/09 08:57:46 [notice] 1#1: start worker process 36
+172.20.0.1 - - [09/Nov/2026:08:57:54 +0000] "GET / HTTP/1.1" 200 34 "-" "curl/8.5.0" "-"
+
+===== 9 收尾：停止并清理（保留卷） =====
+stack removed, volume kept: 1
+
+===== DONE stage03 =====
