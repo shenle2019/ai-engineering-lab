@@ -6,7 +6,8 @@ Python × AI 工程实践仓库，记录 LLM 应用、RAG 检索增强、Agent �
 
 | 路径 | 内容 |
 | --- | --- |
-| `01-llm-local-deploy-and-rag/` | 本地 Qwen 模型部署与 RAG 示例（Ollama + ModelScope + FAISS） |
+| `notes/` | 课程学习笔记，按知识点命名 |
+| `hands-on/` | 实操练习与案例复刻，每个实操一个子目录 |
 
 ## 规划中的内容
 
