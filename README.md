@@ -6,7 +6,7 @@ Python × AI 工程实践仓库，记录 LLM 应用、RAG 检索增强、Agent �
 
 | 路径 | 内容 |
 | --- | --- |
-| `python_summit二期_day01/` | 本地 Qwen 模型部署与 RAG 示例（Ollama + ModelScope） |
+| `01-llm-local-deploy-and-rag/` | 本地 Qwen 模型部署与 RAG 示例（Ollama + ModelScope + FAISS） |
 
 ## 规划中的内容
 
