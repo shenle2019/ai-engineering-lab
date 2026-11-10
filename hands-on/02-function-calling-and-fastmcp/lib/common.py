@@ -3,7 +3,7 @@ import logging
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]  # hands-on/function-calling-and-fastmcp
+ROOT = Path(__file__).resolve().parents[1]  # hands-on/02-function-calling-and-fastmcp
 LOG_DIR = ROOT / "logs"
 
 

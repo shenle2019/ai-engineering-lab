@@ -137,7 +137,7 @@ commit / save / load 把镜像搬到另一台机器
 本机（Windows）侧只需保证 WSL 发行版和 Docker 服务已就绪：
 
 ```powershell
-wsl -d ubuntu-24.04 -- bash /mnt/e/ailearning/python-luffycity/ai-engineering-lab/hands-on/linux-docker-compose-deploy/scripts/run_all.sh
+wsl -d ubuntu-24.04 -- bash /mnt/e/ailearning/python-luffycity/ai-engineering-lab/hands-on/01-linux-docker-compose-deploy/scripts/run_all.sh
 ```
 
 或者进入 WSL 里单独跑某个阶段：
