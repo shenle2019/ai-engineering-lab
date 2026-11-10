@@ -2,7 +2,7 @@
 
 Python 山顶会三期的学习仓库：**课件笔记** + **实操复刻记录** 两条线并行。
 
-- `notes/`：从课件提炼的知识笔记，文件名以 `01-`～`07-` 前缀标出学习顺序，只记录理解，不复刻代码
+- `notes/`：从课件提炼的知识笔记，文件名以 `01-`～`12-` 前缀标出学习顺序，只记录理解，不复刻代码
 - `hands-on/`：按课件自己重写并跑通的实操，目录名同样带顺序前缀，每个实操一个子目录，附带源码、脚本和运行日志
 
 ## 课程地图与进度
@@ -19,11 +19,11 @@ Python 山顶会三期的学习仓库：**课件笔记** + **实操复刻记录*
 | LangChain | day05 | LangChain 结构化输出和流式输出 | 05-LangChain流式传输与结构化输出.md | 同上 |
 | LangChain | day06 | LangChain 高级组件之工具 / 短期记忆 / 护栏 / MCP / 人机交互 | 06-LangChain工具-短期记忆-护栏-MCP与人机交互.md | 同上 |
 | LangChain | day07 | LangChain 高级组件之中间件 / 运行时 / 上下文工程 / 长期记忆 | 07-LangChain中间件-长期记忆-上下文工程与多智能体.md | 同上 |
-| 项目二次开发 | day08 | GitHub 项目二次开发（起步） | 待做 | 待做 |
-| 项目二次开发 | day09 | GitHub 项目二次开发 + Nuxt 框架 | 待做 | 待做 |
-| 项目二次开发 | day10 | GitHub 项目二次开发 + 源码分析 | 待做 | 待做 |
-| 项目二次开发 | day11 | 源码分析与二次开发（含 AGENTS.md 开发准则） | 待做 | 待做 |
-| 项目二次开发 | day12 | AI 功能二次开发与项目部署 | 待做 | 待做 |
+| 项目二次开发 | day08 | GitHub 项目二次开发与 Mealie 本地部署（工具链、Git、uv、Docker） | 08-GitHub项目二次开发与Mealie本地部署.md | 待做 |
+| 项目二次开发 | day09 | Mealie 项目结构与 uv / yarn 本地开发 | 09-Mealie项目结构与uv本地开发环境.md | 待做 |
+| 项目二次开发 | day10 | Mealie 源码分析：启动、配置、路由与数据模型 | 10-Mealie源码分析-启动配置路由与数据模型.md | 待做 |
+| 项目二次开发 | day11 | Nuxt 框架与 Mealie 字段扩展二次开发 | 11-Nuxt框架与Mealie字段扩展二次开发.md | 待做 |
+| 项目二次开发 | day12 | AI 功能二次开发与生产环境部署 | 12-Mealie的AI摘要功能开发与生产部署.md | 待做 |
 | LangGraph | day13 | LangGraph 之智能导游案例与本地服务 | 待做 | 待做 |
 | LangGraph | day14 | LangGraph 核心架构模式和子图 | 待做 | 待做 |
 | LangGraph | day15 | LangGraph 之子图 / 记忆 / 中断 / 持久化 | 待做 | 待做 |
@@ -43,6 +43,11 @@ Python 山顶会三期的学习仓库：**课件笔记** + **实操复刻记录*
 | [notes/05-LangChain流式传输与结构化输出.md](notes/05-LangChain流式传输与结构化输出.md) | day05：流式四模式（updates 节点进度 / messages token / custom 工具进度 / values 整状态）、多模式组合与模型级禁用；Agent 层结构化输出的 `response_format` 四取值、两大策略原理与代价、`structured_response` 取法、Union 与 schema 校验两类自动纠错、`handle_errors` 六档 |
 | [notes/06-LangChain工具-短期记忆-护栏-MCP与人机交互.md](notes/06-LangChain工具-短期记忆-护栏-MCP与人机交互.md) | day06：工具三种精细度与 `args_schema`、`ToolRuntime` 六件套（state/context/store/stream_writer/config/tool_call_id）、ToolNode 与预构建/服务端工具；短期记忆 checkpointer+thread_id、数据库持久化、超限四策略（修剪/删除/总结/自定义）；护栏两类方法与 PIIMiddleware、自定义 before/after 钩子；MCP 三种传输与 `get_tools()` 适配；HITL 三种决策与中断恢复 |
 | [notes/07-LangChain中间件-长期记忆-上下文工程与多智能体.md](notes/07-LangChain中间件-长期记忆-上下文工程与多智能体.md) | day07：中间件四类能力、内置十六个、六个钩子与 `jump_to` 声明、包装式短路/重试、`request.override` 动态换模型；长期记忆 namespace+key 结构与 put/get/search；Runtime 三件套与三处访问点；上下文工程三类来源与三个动态提示手法；多智能体两种做法（Agent 当工具 / LangGraph + Command 交接）；RAG 动机与概念 |
+| [notes/08-GitHub项目二次开发与Mealie本地部署.md](notes/08-GitHub项目二次开发与Mealie本地部署.md) | day08：七步二次开发路径；AI 编辑器定位（Codex / Claude Code）与自定义指令；Git 概念、命令表与三个实操场景（含浅克隆）；uv 五命令与拿新项目的五步检查；Docker 五概念、compose 五问与「ps → logs → exec」排查顺序；DeepWiki / NotebookLM；Mealie 目录、两种运行方式、四个关键配置、9091→9000 与默认账号、启动链路、六类常见问题 |
+| [notes/09-Mealie项目结构与uv本地开发环境.md](notes/09-Mealie项目结构与uv本地开发环境.md) | day09：读陌生项目的文件链；顶层 / 后端 / 前端三张职责表；uv `--extra pgsql --group dev` 本地依赖与三条经验；`yarn` + `yarn dev` 前端启动；本地开发 = 后端 uv + 前端 yarn，Docker 仍是最小验证；启动时 init_db 与登录失败先查初始化；答疑（Claude Code vs Codex、临时邮箱换域名） |
+| [notes/10-Mealie源码分析-启动配置路由与数据模型.md](notes/10-Mealie源码分析-启动配置路由与数据模型.md) | day10：十三步阅读顺序；后端目录职责；`main.py`（uvicorn）与 `app.py`（FastAPI、中间件、`api_routers()`、`lifespan_fn` → `init_db.main()` + `start_scheduler()`）；`core/config.py` 与 `AppSettings` 字段表、`OPENAI_FEATURE`；自建 fast_model demo 的三层路由写法；总路由 `/api`；recipe 模块与六层调用链；`RecipeModel` 四类字段与关联、Schema 四类、前端对应路径 |
+| [notes/11-Nuxt框架与Mealie字段扩展二次开发.md](notes/11-Nuxt框架与Mealie字段扩展二次开发.md) | day11：Nuxt 定义与 Nuxt2/Nuxt3+ 版本对应、五特性与 Vue 对比、适用边界；约定式目录；文件路由映射、动态/可选/通配、`NuxtLink`、嵌套路由与 `definePageMeta`；三类中间件；布局（`<NuxtPage />`、`layout: false`、`useLayoutData`）；组件与 composable 自动导入（目录前缀、`_` 排除）；difficulty 需求六问 → ORM → alembic 迁移 → Schema → 路由/服务 → 前端五步 |
+| [notes/12-Mealie的AI摘要功能开发与生产部署.md](notes/12-Mealie的AI摘要功能开发与生产部署.md) | day12 上半：复用 `OpenAIService`（get_client / 点号 get_prompt / `OpenAIDataInjection` / `response_schema`）、`OpenAIBase` 与 Prompt 目录、三个现成案例；`POST /api/recipes/{slug}/ai-summary` 设计与不落库理由、白名单序列化、`OpenAIRecipeSummary`、Prompt 六条边界、Service + 薄 Route、前端 API/组件/i18n、五项手动验证与十五步顺序。下半：多阶段 Dockerfile 四段、entry.sh 与 healthcheck、`/opt/mealie` 目录、`.env.production`、compose prod 三容器（`127.0.0.1:9925:9000`、`--env-file` 插值）、Nginx 用服务名转发、HTTPS 挂整个 letsencrypt、备份/升级/回滚、防火墙与最小验收十条 |
 
 ### 实操
 
@@ -81,7 +86,7 @@ Python 山顶会三期的学习仓库：**课件笔记** + **实操复刻记录*
 
 ## 约定
 
-- 笔记文件按知识点命名，用 `01-`～`07-` 数字前缀表示学习顺序，不带 `dayXX`、`预习X` 这类课次前缀
+- 笔记文件按知识点命名，用 `01-`～`12-` 数字前缀表示学习顺序，不带 `dayXX`、`预习X` 这类课次前缀
 - 实操目录按关键知识点命名，同样带顺序前缀（`01-`、`02-`、`03-`），一个实操一个子目录，内含源码、脚本、日志
 - 只记录真跑通的内容；没跑起来的部分在对应 README 里写明现象与已尝试步骤
 - 目录名统一英文 kebab-case，避免中文路径在 URL 中被编码
