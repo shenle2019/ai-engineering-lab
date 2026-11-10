@@ -1,0 +1,9 @@
+# 课件版本为 langchain 1.2.9，本机实测装在 1.4.9 上，本实操用到的 API 均已验证存在
+langchain==1.4.9
+langchain-core==1.7.6
+langchain-openai==1.7.4
+langchain-deepseek==1.1.1
+langgraph==1.2.20
+langchain-mcp-adapters==0.3.2
+mcp==1.30.0
+pydantic==2.14.3

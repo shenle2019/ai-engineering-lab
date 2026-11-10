@@ -7,6 +7,7 @@
 | 目录 | 内容 | 验证状态 |
 | --- | --- | --- |
 | [linux-docker-compose-deploy](linux-docker-compose-deploy) | Linux 基础 → redis/nginx 单容器 → Dockerfile 构建 Flask 计数应用 → Compose 三服务编排 → 镜像 save/load 迁移 | 已在本机 WSL2 + Docker 29.1.3 跑通，5 个阶段日志齐全 |
+| [langchain-agent-engineering](langchain-agent-engineering) | day03–day07 串成一条电商客服案例：Agents/Models/Messages → 流式与结构化输出 → 工具与短期记忆与护栏 → MCP 与 HITL → 中间件与长期记忆与上下文工程 → 多智能体 → 综合案例 | 已在本机 Windows + Python 3.11.9 + LangChain 1.4.9 + DeepSeek 真跑，7 个阶段 + 1 个案例日志齐全 |
 
 ## 约定
 

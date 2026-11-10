@@ -14,11 +14,11 @@ Python 山顶会三期的学习仓库：**课件笔记** + **实操复刻记录*
 | 环境基础 | 预习3 | Docker Compose 详解（服务、项目、多容器编排） | 同上 | 同上 |
 | 工具调用 | day01 | Function Calling 之 AI 股票小助手和 MCP | FunctionCalling与FastMCP-MCP协议与服务端开发.md | function-calling-and-fastmcp |
 | 工具调用 | day02 | FastMCP 从入门到精通 | 同上 | 同上 |
-| LangChain | day03 | LangChain v1.2.9 核心组件之 Agents 和 Models | LangChain框架概览与Agents智能体入门.md | 待做 |
-| LangChain | day04 | LangChain 核心之 Models 模型和 Messages 消息 | LangChain模型接入与消息体系.md | 待做 |
-| LangChain | day05 | LangChain 结构化输出和流式输出 | LangChain流式传输与结构化输出.md | 待做 |
-| LangChain | day06 | LangChain 高级组件之工具 / 短期记忆 / 护栏 / MCP / 人机交互 | LangChain工具-短期记忆-护栏-MCP与人机交互.md | 待做 |
-| LangChain | day07 | LangChain 高级组件之中间件 / 运行时 / 上下文工程 / 长期记忆 | LangChain中间件-长期记忆-上下文工程与多智能体.md | 待做 |
+| LangChain | day03 | LangChain v1.2.9 核心组件之 Agents 和 Models | LangChain框架概览与Agents智能体入门.md | langchain-agent-engineering |
+| LangChain | day04 | LangChain 核心之 Models 模型和 Messages 消息 | LangChain模型接入与消息体系.md | 同上 |
+| LangChain | day05 | LangChain 结构化输出和流式输出 | LangChain流式传输与结构化输出.md | 同上 |
+| LangChain | day06 | LangChain 高级组件之工具 / 短期记忆 / 护栏 / MCP / 人机交互 | LangChain工具-短期记忆-护栏-MCP与人机交互.md | 同上 |
+| LangChain | day07 | LangChain 高级组件之中间件 / 运行时 / 上下文工程 / 长期记忆 | LangChain中间件-长期记忆-上下文工程与多智能体.md | 同上 |
 | 项目二次开发 | day08 | GitHub 项目二次开发（起步） | 待做 | 待做 |
 | 项目二次开发 | day09 | GitHub 项目二次开发 + Nuxt 框架 | 待做 | 待做 |
 | 项目二次开发 | day10 | GitHub 项目二次开发 + 源码分析 | 待做 | 待做 |
@@ -50,6 +50,7 @@ Python 山顶会三期的学习仓库：**课件笔记** + **实操复刻记录*
 | --- | --- | --- |
 | [hands-on/linux-docker-compose-deploy](hands-on/linux-docker-compose-deploy) | 把预习三课串成一条链路：Linux 基础操作 → redis/nginx 单容器 → Dockerfile 构建 Flask 访问计数应用 → Compose 编排 redis+web+nginx → 镜像 commit/save/load 迁移 | 在本机 WSL2 Ubuntu 24.04 + Docker 29.1.3 真机跑通，5 个阶段脚本 + 运行日志存于目录内 |
 | [hands-on/function-calling-and-fastmcp](hands-on/function-calling-and-fastmcp) | 把 day01–day02 串成一条链路：手工 Function Calling 七步 → 东方财富行情工具（字段校准）→ FastMCP 发布为 MCP server（两种传输、三组件、中间件）→ PC 文件助手 → LLM 经 MCP Host 调工具 | 本机 Windows + Python 3.11 + fastmcp 2.14.7 + DeepSeek 真跑，7 个阶段脚本 + 运行日志存于目录内；同时修正了课件中 f43 除数、f116 含义两处错误 |
+| [hands-on/langchain-agent-engineering](hands-on/langchain-agent-engineering) | 把 day03–day07 串成一条电商售后客服案例：Agents/Models/Messages 基础 → 四种流式模式与结构化输出纠错 → ToolRuntime/短期记忆/PII 与自定义护栏 → FastMCP 工具经 MCP 接入 → HITL 退款审批 → 中间件与长期记忆与上下文工程 → 两种多智能体做法 → 综合案例（护栏+双记忆+HITL+多智能体+流式+工单结构化输出） | 本机 Windows + Python 3.11.9 + LangChain 1.4.9 + DeepSeek 真跑，7 个阶段脚本 + 1 个综合案例 + 8 份运行日志存于目录内 |
 
 ## 运行环境
 
@@ -72,8 +73,9 @@ Python 山顶会三期的学习仓库：**课件笔记** + **实操复刻记录*
 
 | 项 | 版本 |
 | --- | --- |
-| Python | 3.11.9（fastmcp 要求 ≥3.10，系统默认 3.8 不可用） |
-| fastmcp | 2.14.7（`fastmcp<3`） |
+| Python | 3.11.9（fastmcp / LangChain 1.x 均要求 ≥3.10，系统默认 3.8 不可用） |
+| fastmcp | 2.14.7（`fastmcp<3`，function-calling-and-fastmcp 用） |
+| LangChain / LangGraph | langchain 1.4.9、langgraph 1.2.20、langchain-mcp-adapters 0.3.2、mcp 1.30.0（langchain-agent-engineering 用） |
 | LLM | DeepSeek `deepseek-chat`（OpenAI 兼容），key 只走环境变量 |
 | 外部数据 | 东方财富公开行情接口（匿名、只读、低频） |
 
