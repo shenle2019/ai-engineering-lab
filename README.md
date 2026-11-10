@@ -14,11 +14,11 @@ Python 山顶会三期的学习仓库：**课件笔记** + **实操复刻记录*
 | 环境基础 | 预习3 | Docker Compose 详解（服务、项目、多容器编排） | 同上 | 同上 |
 | 工具调用 | day01 | Function Calling 之 AI 股票小助手和 MCP | FunctionCalling与FastMCP-MCP协议与服务端开发.md | function-calling-and-fastmcp |
 | 工具调用 | day02 | FastMCP 从入门到精通 | 同上 | 同上 |
-| LangChain | day03 | LangChain v1.2.9 核心组件之 Agents 和 Models | 待做 | 待做 |
-| LangChain | day04 | LangChain 核心之 Models 模型和 Messages 消息 | 待做 | 待做 |
-| LangChain | day05 | LangChain 结构化输出和流式输出 | 待做 | 待做 |
-| LangChain | day06 | LangChain 高级组件之工具 / 短期记忆 / 护栏 / MCP / 人机交互 | 待做 | 待做 |
-| LangChain | day07 | LangChain 高级组件之中间件 / 运行时 / 上下文工程 / 长期记忆 | 待做 | 待做 |
+| LangChain | day03 | LangChain v1.2.9 核心组件之 Agents 和 Models | LangChain框架概览与Agents智能体入门.md | 待做 |
+| LangChain | day04 | LangChain 核心之 Models 模型和 Messages 消息 | LangChain模型接入与消息体系.md | 待做 |
+| LangChain | day05 | LangChain 结构化输出和流式输出 | LangChain流式传输与结构化输出.md | 待做 |
+| LangChain | day06 | LangChain 高级组件之工具 / 短期记忆 / 护栏 / MCP / 人机交互 | LangChain工具-短期记忆-护栏-MCP与人机交互.md | 待做 |
+| LangChain | day07 | LangChain 高级组件之中间件 / 运行时 / 上下文工程 / 长期记忆 | LangChain中间件-长期记忆-上下文工程与多智能体.md | 待做 |
 | 项目二次开发 | day08 | GitHub 项目二次开发（起步） | 待做 | 待做 |
 | 项目二次开发 | day09 | GitHub 项目二次开发 + Nuxt 框架 | 待做 | 待做 |
 | 项目二次开发 | day10 | GitHub 项目二次开发 + 源码分析 | 待做 | 待做 |
@@ -38,6 +38,11 @@ Python 山顶会三期的学习仓库：**课件笔记** + **实操复刻记录*
 | --- | --- |
 | [notes/Linux与Docker容器化基础.md](notes/Linux与Docker容器化基础.md) | 预习1–3：Linux 发行版与常用命令、权限与链接、vim、systemd、进程；Docker 镜像/容器/数据卷/Dockerfile；Compose 服务编排 |
 | [notes/FunctionCalling与FastMCP-MCP协议与服务端开发.md](notes/FunctionCalling与FastMCP-MCP协议与服务端开发.md) | day01–day02：Function Calling 七步流程与 tools 说明书、反射调用与二次请求消息结构；MCP 架构与三种传输方式（Streamable HTTP / stdio / SSE 弃用）、生态入口、12306 server 部署；FastMCP 三大组件 Tool/Resource/Prompt、中间件、三种客户端接入；AI 股票小助手（东方财富接口）与 AI PC 助手（注册表读软件）两个案例 |
+| [notes/LangChain框架概览与Agents智能体入门.md](notes/LangChain框架概览与Agents智能体入门.md) | day03：LangChain 定位与发展史（0.3 到 1.0 的断层）、家族七件套选型、安装与版本锁定；`create_agent` 三要素（模型字符串 vs 模型对象、`@tool` 与 docstring、静态/动态提示词）；动态模型中间件、结构化输出两策略、自定义 state 短期记忆、`values` 流式；中间件钩子预告 |
+| [notes/LangChain模型接入与消息体系.md](notes/LangChain模型接入与消息体系.md) | day04：Models 四种对接方式（ChatOpenAI / init_chat_model / 官方包 / ChatTongyi）与「官方包 vs 兼容层只差思考过程」；参数与方法、裸 Model 的工具调用五小节、结构化输出四形态、高级主题十一项（多模态、profile、reasoning、Ollama、服务端工具、限流、代理、logprobs、token 统计、RunnableConfig、可配置模型）；Messages 四类型、三种写法、`content_blocks` 标准块全清单与多模态三种来源 |
+| [notes/LangChain流式传输与结构化输出.md](notes/LangChain流式传输与结构化输出.md) | day05：流式四模式（updates 节点进度 / messages token / custom 工具进度 / values 整状态）、多模式组合与模型级禁用；Agent 层结构化输出的 `response_format` 四取值、两大策略原理与代价、`structured_response` 取法、Union 与 schema 校验两类自动纠错、`handle_errors` 六档 |
+| [notes/LangChain工具-短期记忆-护栏-MCP与人机交互.md](notes/LangChain工具-短期记忆-护栏-MCP与人机交互.md) | day06：工具三种精细度与 `args_schema`、`ToolRuntime` 六件套（state/context/store/stream_writer/config/tool_call_id）、ToolNode 与预构建/服务端工具；短期记忆 checkpointer+thread_id、数据库持久化、超限四策略（修剪/删除/总结/自定义）；护栏两类方法与 PIIMiddleware、自定义 before/after 钩子；MCP 三种传输与 `get_tools()` 适配；HITL 三种决策与中断恢复 |
+| [notes/LangChain中间件-长期记忆-上下文工程与多智能体.md](notes/LangChain中间件-长期记忆-上下文工程与多智能体.md) | day07：中间件四类能力、内置十六个、六个钩子与 `jump_to` 声明、包装式短路/重试、`request.override` 动态换模型；长期记忆 namespace+key 结构与 put/get/search；Runtime 三件套与三处访问点；上下文工程三类来源与三个动态提示手法；多智能体两种做法（Agent 当工具 / LangGraph + Command 交接）；RAG 动机与概念 |
 
 ### 实操
 
