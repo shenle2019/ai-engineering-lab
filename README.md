@@ -2,7 +2,7 @@
 
 Python 山顶会三期的学习仓库：**课件笔记** + **实操复刻记录** 两条线并行。
 
-- `notes/`：从课件提炼的知识笔记，文件名以 `01-`～`12-` 前缀标出学习顺序，只记录理解，不复刻代码
+- `notes/`：从课件提炼的知识笔记，文件名以 `01-`～`16-` 前缀标出学习顺序，只记录理解，不复刻代码
 - `hands-on/`：按课件自己重写并跑通的实操，目录名同样带顺序前缀，每个实操一个子目录，附带源码、脚本和运行日志
 
 ## 课程地图与进度
@@ -24,10 +24,10 @@ Python 山顶会三期的学习仓库：**课件笔记** + **实操复刻记录*
 | 项目二次开发 | day10 | Mealie 源码分析：启动、配置、路由与数据模型 | 10-Mealie源码分析-启动配置路由与数据模型.md | 同上 |
 | 项目二次开发 | day11 | Nuxt 框架与 Mealie 字段扩展二次开发 | 11-Nuxt框架与Mealie字段扩展二次开发.md | 同上 |
 | 项目二次开发 | day12 | AI 功能二次开发与生产环境部署 | 12-Mealie的AI摘要功能开发与生产部署.md | 同上 |
-| LangGraph | day13 | LangGraph 之智能导游案例与本地服务 | 待做 | 待做 |
-| LangGraph | day14 | LangGraph 核心架构模式和子图 | 待做 | 待做 |
-| LangGraph | day15 | LangGraph 之子图 / 记忆 / 中断 / 持久化 | 待做 | 待做 |
-| LangGraph | day16 | LangGraph 之时间旅行 / 流式处理 / 持久执行 | 待做 | 待做 |
+| LangGraph | day13 | LangGraph 之智能导游案例与本地服务 | 13-LangGraph入门-状态图智能导游与本地服务.md | 待做 |
+| LangGraph | day14 | LangGraph 核心架构模式和子图 | 14-LangGraph工作流架构模式与子图.md | 待做 |
+| LangGraph | day15 | LangGraph 之子图 / 记忆 / 中断 / 持久化 | 15-LangGraph记忆-中断与持久化.md | 待做 |
+| LangGraph | day16 | LangGraph 之时间旅行 / 流式处理 / 持久执行 | 16-LangGraph时间旅行-流式处理与持久执行.md | 待做 |
 | 工程化 | day17 | Skill 从入门到精通 | 待做 | 待做 |
 
 ## 已完成内容
@@ -48,6 +48,10 @@ Python 山顶会三期的学习仓库：**课件笔记** + **实操复刻记录*
 | [notes/10-Mealie源码分析-启动配置路由与数据模型.md](notes/10-Mealie源码分析-启动配置路由与数据模型.md) | day10：十三步阅读顺序；后端目录职责；`main.py`（uvicorn）与 `app.py`（FastAPI、中间件、`api_routers()`、`lifespan_fn` → `init_db.main()` + `start_scheduler()`）；`core/config.py` 与 `AppSettings` 字段表、`OPENAI_FEATURE`；自建 fast_model demo 的三层路由写法；总路由 `/api`；recipe 模块与六层调用链；`RecipeModel` 四类字段与关联、Schema 四类、前端对应路径 |
 | [notes/11-Nuxt框架与Mealie字段扩展二次开发.md](notes/11-Nuxt框架与Mealie字段扩展二次开发.md) | day11：Nuxt 定义与 Nuxt2/Nuxt3+ 版本对应、五特性与 Vue 对比、适用边界；约定式目录；文件路由映射、动态/可选/通配、`NuxtLink`、嵌套路由与 `definePageMeta`；三类中间件；布局（`<NuxtPage />`、`layout: false`、`useLayoutData`）；组件与 composable 自动导入（目录前缀、`_` 排除）；difficulty 需求六问 → ORM → alembic 迁移 → Schema → 路由/服务 → 前端五步 |
 | [notes/12-Mealie的AI摘要功能开发与生产部署.md](notes/12-Mealie的AI摘要功能开发与生产部署.md) | day12 上半：复用 `OpenAIService`（get_client / 点号 get_prompt / `OpenAIDataInjection` / `response_schema`）、`OpenAIBase` 与 Prompt 目录、三个现成案例；`POST /api/recipes/{slug}/ai-summary` 设计与不落库理由、白名单序列化、`OpenAIRecipeSummary`、Prompt 六条边界、Service + 薄 Route、前端 API/组件/i18n、五项手动验证与十五步顺序。下半：多阶段 Dockerfile 四段、entry.sh 与 healthcheck、`/opt/mealie` 目录、`.env.production`、compose prod 三容器（`127.0.0.1:9925:9000`、`--env-file` 插值）、Nginx 用服务名转发、HTTPS 挂整个 letsencrypt、备份/升级/回滚、防火墙与最小验收十条 |
+| [notes/13-LangGraph入门-状态图智能导游与本地服务.md](notes/13-LangGraph入门-状态图智能导游与本地服务.md) | day13：LangGraph 定位（状态机 / 流程图、对比 LangChain 六项能力）；智能导游案例（TypedDict State、六节点、`re_plan → check_budget` 回边循环、费用正则提取）；graphviz 与 `draw_mermaid_png` 两种可视化；Graph API 六步 ReAct（reducer、tool_calls 判断、tool→llm 回边）与 Functional API 四步（`@task`/`@entrypoint`）；工程结构（`utils/{tools,nodes,state}.py` + `agent.py` + `langgraph.json`）、`langgraph new`/`dev`（2024 端口）、SDK 客户端调用、LangSmith 部署；工作流 / 高级编排 / Agent 控制权选型 |
+| [notes/14-LangGraph工作流架构模式与子图.md](notes/14-LangGraph工作流架构模式与子图.md) | day14：LLM 增强三件套；六种工作流模式 + Agent 逐个讲（提示链 gate、并行化聚合、`with_structured_output(Literal)` 路由、`Send` 动态 fan-out 编排者-工作者、评估者-优化器回边循环、ReAct）；模式选型速查表；子图两种挂法（节点内 `invoke` 自定义转换 vs `add_node(name, subgraph)` 共享 state）与选择依据、`xray=True` 可视化 |
+| [notes/15-LangGraph记忆-中断与持久化.md](notes/15-LangGraph记忆-中断与持久化.md) | day15：子图持久化（透传 thread_id / 继承 vs 独立）与子图流式（`subgraphs=True`）；短期 vs 长期记忆对比表、五种 checkpointer 后端差异（`setup()`、`check_same_thread`、上下文管理器）、长期记忆 `Runtime` + `context_schema` + namespace put/search；短期记忆四种管理法（trim / RemoveMessage / langmem 总结 / 检查点运维）；`interrupt()` + `Command(resume=)` 机制、四种常见模式、六条铁律（不 catch、顺序稳、值可序列化、副作用幂等…）；持久化两大组件与 `interrupt_before` 静态断点 |
+| [notes/16-LangGraph时间旅行-流式处理与持久执行.md](notes/16-LangGraph时间旅行-流式处理与持久执行.md) | day16：静态断点改 `interrupt()` 动态中断的对比；时间旅行三动作（`get_state_history` 找快照 → `invoke(None, snapshot.config)` 重放 → `update_state` + `as_node` 建分支）、中断场景重放会再触发 interrupt、多中断表单、子图时间旅行粒度（继承父图 vs `checkpointer=True` + `get_state(config, subgraphs=True)`）；流式两粒度（节点级 / `stream_mode="messages"` 按 `langgraph_node` 过滤）与 HITL 混合流；持久执行（崩溃恢复 `invoke(None)`、`email_sent` 精确一次、故障续跑） |
 
 ### 实操
 
@@ -87,7 +91,7 @@ Python 山顶会三期的学习仓库：**课件笔记** + **实操复刻记录*
 
 ## 约定
 
-- 笔记文件按知识点命名，用 `01-`～`12-` 数字前缀表示学习顺序，不带 `dayXX`、`预习X` 这类课次前缀
+- 笔记文件按知识点命名，用 `01-`～`16-` 数字前缀表示学习顺序，不带 `dayXX`、`预习X` 这类课次前缀
 - 实操目录按关键知识点命名，同样带顺序前缀（`01-`、`02-`、`03-`、`04-`），一个实操一个子目录，内含源码、脚本、日志
 - 只记录真跑通的内容；没跑起来的部分在对应 README 里写明现象与已尝试步骤
 - 目录名统一英文 kebab-case，避免中文路径在 URL 中被编码
