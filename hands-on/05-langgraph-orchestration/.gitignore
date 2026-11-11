@@ -2,3 +2,8 @@
 *.db
 *.db-journal
 __pycache__/
+# langgraph dev 运行时缓存（.pckl/store）
+.langgraph_api/
+# 本地环境
+.env
+venv/
