@@ -1,0 +1,29 @@
+﻿图结构： PNG s07-time-travel.png
+
+[1] 首次运行：为什么烘干机里的袜子会消失？因为它们私奔了。
+    执行计数：{'generate_topic': 1, 'write_joke': 1, 'review': 1}
+    找到快照：checkpoint=1f1ddbd1… next=('write_joke',)
+
+[2] 重放：从上一步快照继续
+    重放结果：为什么烘干机里的袜子会消失？因为它们私奔了。
+    执行计数：{'generate_topic': 1, 'write_joke': 2, 'review': 2}（write_joke 与 review 各多一次）
+
+[3] 分支：从旧快照改主题重跑
+    分支结果：为什么小鸡会消失？因为它们私奔了。
+    thread 头已指向新分支：为什么小鸡会消失？因为它们私奔了。
+    旧分支没被删：历史里仍有 4 个『袜子』版本快照
+    注：update_state 是在同一个 thread 上追加检查点、把线程头挪到新分支，
+        旧检查点仍可按 checkpoint_id 读；要让两条线互不干扰，就给分支一个新 thread_id。
+    执行计数：{'generate_topic': 1, 'write_joke': 3, 'review': 3}
+
+[4] 子图时间旅行：拿子图自己的 config
+    父图 next=()（已结束，任务已清空 tasks=0）
+    子图自己的检查点 3 个
+    子图命名空间 = sub:8dbe4b4a-fac7-9b6b-68d4-0523558676bf
+    按子图 config 读状态：detail=杭州 的第一版细则
+    子图历史长度 = 3
+      next=() detail=杭州 的第一版细则
+      next=('sub_node',) detail=None
+      next=('__start__',) detail=None
+
+S07 OK：重放、分支、子图粒度三类时间旅行都可复现

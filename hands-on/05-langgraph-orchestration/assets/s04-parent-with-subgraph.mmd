@@ -1,0 +1,20 @@
+---
+config:
+  flowchart:
+    curve: linear
+---
+graph TD;
+	__start__([<p>__start__</p>]):::first
+	preclean(preclean)
+	__end__([<p>__end__</p>]):::last
+	__start__ --> preclean;
+	preclean --> subgraph\3anormalize;
+	subgraph\3adecorate --> __end__;
+	subgraph subgraph
+	subgraph\3anormalize(normalize)
+	subgraph\3adecorate(decorate)
+	subgraph\3anormalize --> subgraph\3adecorate;
+	end
+	classDef default fill:#f2f0ff,line-height:1.2
+	classDef first fill-opacity:0
+	classDef last fill:#bfb6fc

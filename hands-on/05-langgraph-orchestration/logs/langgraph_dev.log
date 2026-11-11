@@ -1,0 +1,11 @@
+﻿== 1) GET /ok ==
+ERR: 无法连接到远程服务器
+
+== 2) GET /assistants ==
+ERR: 无法连接到远程服务器
+
+== 3) POST /threads ==
+thread_id=
+
+== 4) POST /threads/{id}/runs/wait ==
+ERR: 无法连接到远程服务器

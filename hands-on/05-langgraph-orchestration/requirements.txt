@@ -1,0 +1,12 @@
+# 课件基于 langgraph 1.1.x / langchain 1.2.x，本机实测装在下列版本
+langgraph==1.2.20
+langchain==1.4.10
+langchain-core==1.7.7
+langchain-openai==1.7.4
+langgraph-checkpoint-sqlite==3.1.3
+pydantic==2.14.3
+python-dotenv==1.2.4
+
+# s10 服务化验证（langgraph dev）才需要，装它会把 langgraph-checkpoint 升到 4.3.1
+langgraph-cli[inmem]==0.4.42
+colorama==0.4.6
