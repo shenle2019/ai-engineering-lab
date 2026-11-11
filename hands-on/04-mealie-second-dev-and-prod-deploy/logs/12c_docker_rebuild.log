@@ -1,0 +1,163 @@
+START 2026-11-11 13:02:45
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            BuildKit is currently disabled; enable it by removing the DOCKER_BUILDKIT=0
+            environment-variable.
+
+Sending build context to Docker daemon  59.23MB
+Step 1/52 : FROM node:24@sha256:80fc934952c8f1b2b4d39907af7211f8a9fff1a4c2cf673fb49099292c251cec     AS frontend-builder
+ ---> 80fc934952c8
+Step 2/52 : WORKDIR /frontend
+ ---> Using cache
+ ---> 4f4e6a138b0d
+Step 3/52 : COPY frontend .
+ ---> Using cache
+ ---> 5b71bc7c2a45
+Step 4/52 : RUN yarn install     --prefer-offline     --frozen-lockfile     --non-interactive     --production=false     --network-timeout 1000000
+ ---> Using cache
+ ---> e0d98aca291e
+Step 5/52 : RUN yarn generate
+ ---> Using cache
+ ---> f91eebd0f7f6
+Step 6/52 : FROM python:3.12-slim@sha256:7026274c107626d7e940e0e5d6730481a4600ae95d5ca7eb532dd4180313fea9     AS python-base
+ ---> 7026274c1076
+Step 7/52 : ENV MEALIE_HOME="/app"
+ ---> Using cache
+ ---> 3c50dee0e7db
+Step 8/52 : ENV PYTHONUNBUFFERED=1     PYTHONDONTWRITEBYTECODE=1     PIP_NO_CACHE_DIR=off     PIP_DISABLE_PIP_VERSION_CHECK=on     PIP_DEFAULT_TIMEOUT=100     VENV_PATH="/opt/mealie"
+ ---> Using cache
+ ---> 6835dee13af5
+Step 9/52 : ARG PIP_INDEX_URL=https://mirrors.aliyun.com/pypi/simple/
+ ---> Using cache
+ ---> d26f4fed74ab
+Step 10/52 : ARG UV_INDEX_URL=https://mirrors.aliyun.com/pypi/simple/
+ ---> Using cache
+ ---> 5ef9e3fb1ae7
+Step 11/52 : ENV PIP_INDEX_URL=${PIP_INDEX_URL}     UV_INDEX_URL=${UV_INDEX_URL}     UV_DEFAULT_INDEX=${UV_INDEX_URL}
+ ---> Using cache
+ ---> 0b055fb1baa3
+Step 12/52 : ENV PATH="$VENV_PATH/bin:$PATH"
+ ---> Using cache
+ ---> 0375f1249fd7
+Step 13/52 : RUN useradd -u 911 -U -d $MEALIE_HOME -s /bin/bash abc     && usermod -G users abc     && mkdir $MEALIE_HOME
+ ---> Using cache
+ ---> 67ed06840151
+Step 14/52 : FROM python-base AS backend-builder
+ ---> 67ed06840151
+Step 15/52 : RUN apt-get update     && apt-get install --no-install-recommends -y     curl     && rm -rf /var/lib/apt/lists/*
+ ---> Using cache
+ ---> 1f7de0eee1b5
+Step 16/52 : RUN pip install uv
+ ---> Using cache
+ ---> 0fde786e499c
+Step 17/52 : WORKDIR /mealie
+ ---> Using cache
+ ---> 3f425b514938
+Step 18/52 : COPY uv.lock pyproject.toml ./
+ ---> Using cache
+ ---> 0fd5193280c7
+Step 19/52 : COPY mealie ./mealie
+ ---> Using cache
+ ---> af20e4a1b34c
+Step 20/52 : COPY --from=frontend-builder /frontend/dist ./mealie/frontend
+ ---> Using cache
+ ---> d02ed93e70de
+Step 21/52 : RUN uv build --out-dir dist
+ ---> Using cache
+ ---> 0eef12569ebc
+Step 22/52 : RUN uv export --no-editable --no-emit-project --extra pgsql --format requirements-txt --output-file dist/requirements.txt     && MEALIE_VERSION=$(python -c "import tomllib; print(tomllib.load(open('pyproject.toml', 'rb'))['project']['version'])")     && echo "mealie[pgsql]==${MEALIE_VERSION} \\" >> dist/requirements.txt     && pip hash dist/mealie-${MEALIE_VERSION}-py3-none-any.whl | tail -n1 | tr -d '\n' >> dist/requirements.txt     && echo " \\" >> dist/requirements.txt     && pip hash dist/mealie-${MEALIE_VERSION}.tar.gz | tail -n1 >> dist/requirements.txt
+ ---> Using cache
+ ---> f0a524c71ea3
+Step 23/52 : FROM scratch AS packages
+ ---> 
+Step 24/52 : COPY --from=backend-builder /mealie/dist /
+ ---> Using cache
+ ---> df0cebcbf310
+Step 25/52 : FROM python-base AS venv-builder-base
+ ---> 67ed06840151
+Step 26/52 : RUN apt-get update     && apt-get install --no-install-recommends -y     build-essential     libpq-dev     libwebp-dev     ffmpeg     libsasl2-dev libldap2-dev libssl-dev     gnupg gnupg2 gnupg1     && rm -rf /var/lib/apt/lists/*
+ ---> Using cache
+ ---> 795feb27125d
+Step 27/52 : RUN python3 -m venv --upgrade-deps $VENV_PATH
+ ---> Using cache
+ ---> 138f4d5dad9c
+Step 28/52 : FROM venv-builder-base AS venv-builder
+ ---> 138f4d5dad9c
+Step 29/52 : COPY --from=packages * /dist/
+ ---> Using cache
+ ---> 55e5982c6f73
+Step 30/52 : RUN . $VENV_PATH/bin/activate     && pip install --require-hashes -r /dist/requirements.txt --find-links /dist
+ ---> Using cache
+ ---> a42118567c53
+Step 31/52 : FROM python-base AS production
+ ---> 67ed06840151
+Step 32/52 : ENV PRODUCTION=true
+ ---> Using cache
+ ---> b6a4af2c6db1
+Step 33/52 : ENV TESTING=false
+ ---> Using cache
+ ---> 1940f61756e6
+Step 34/52 : ARG COMMIT
+ ---> Using cache
+ ---> 45a41b08335b
+Step 35/52 : ENV GIT_COMMIT_HASH=$COMMIT
+ ---> Using cache
+ ---> 6b407b518cbf
+Step 36/52 : RUN apt-get update     && apt-get install --no-install-recommends -y     curl     ffmpeg     gosu     iproute2     libldap-common     libldap2     && rm -rf /var/lib/apt/lists/*
+ ---> Using cache
+ ---> 6881f1bcba99
+Step 37/52 : RUN mkdir -p /run/secrets
+ ---> Using cache
+ ---> c0562aac5845
+Step 38/52 : COPY --from=venv-builder $VENV_PATH $VENV_PATH
+ ---> Using cache
+ ---> 72c4e678076e
+Step 39/52 : ENV NLTK_DATA="/nltk_data/"
+ ---> Using cache
+ ---> c66ca744c797
+Step 40/52 : RUN mkdir -p $NLTK_DATA
+ ---> Using cache
+ ---> 49741c7a06df
+Step 41/52 : RUN python -m nltk.downloader -d $NLTK_DATA averaged_perceptron_tagger_eng
+ ---> Using cache
+ ---> 084c71dcbe55
+Step 42/52 : VOLUME [ "$MEALIE_HOME/data/" ]
+ ---> Using cache
+ ---> 8dcac2bafbdc
+Step 43/52 : ENV APP_PORT=9000
+ ---> Using cache
+ ---> 905b32749799
+Step 44/52 : EXPOSE ${APP_PORT}
+ ---> Using cache
+ ---> 460440082770
+Step 45/52 : COPY ./docker/healthcheck.sh $MEALIE_HOME/healthcheck.sh
+ ---> 02293bd4d374
+Step 46/52 : RUN sed -i 's/\r$//' $MEALIE_HOME/healthcheck.sh && chmod +x $MEALIE_HOME/healthcheck.sh
+ ---> Running in 3d5826e0991b
+ ---> Removed intermediate container 3d5826e0991b
+ ---> ee990132ad98
+Step 47/52 : HEALTHCHECK CMD $MEALIE_HOME/healthcheck.sh
+ ---> Running in 97d6aad9f0fc
+ ---> Removed intermediate container 97d6aad9f0fc
+ ---> c17d3cb4377b
+Step 48/52 : ENV HOST 0.0.0.0
+ ---> Running in 76b6b5e89852
+ ---> Removed intermediate container 76b6b5e89852
+ ---> 425e3ba63cf8
+Step 49/52 : EXPOSE ${APP_PORT}
+ ---> Running in 4f87381b66e0
+ ---> Removed intermediate container 4f87381b66e0
+ ---> 8ba792445ec1
+Step 50/52 : COPY ./docker/entry.sh $MEALIE_HOME/run.sh
+ ---> b1574216d409
+Step 51/52 : RUN sed -i 's/\r$//' $MEALIE_HOME/run.sh && chmod +x $MEALIE_HOME/run.sh
+ ---> Running in 229932005db1
+ ---> Removed intermediate container 229932005db1
+ ---> 86796c7de1ef
+Step 52/52 : ENTRYPOINT ["/app/run.sh"]
+ ---> Running in 65b763d96662
+ ---> Removed intermediate container 65b763d96662
+ ---> 95812d191497
+Successfully built 95812d191497
+Successfully tagged mealie:3.15.1-custom
+BUILD_EXIT=True
+END 2026-11-11 13:03:50

@@ -1,0 +1,17 @@
+=== 2026-11-11 13:10:35 prod db check ===
+--- alembic_version ---
+fc7cdab5b7a2
+--- recipes.difficulty ---
+difficulty|character varying|YES
+--- users ---
+1
+=== 2026-11-11 13:10:35 done ===
+=== 2026-11-11 13:10:48 prod db check ===
+--- alembic_version ---
+fc7cdab5b7a2
+--- recipes.difficulty ---
+difficulty|character varying|YES
+--- users ---
+admin|changeme@example.com|t
+--- recipes ---
+=== 2026-11-11 13:10:49 done ===

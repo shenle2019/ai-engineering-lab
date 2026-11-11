@@ -9,6 +9,7 @@
 | [01-linux-docker-compose-deploy](01-linux-docker-compose-deploy) | 预习1–3：Linux 基础 → redis/nginx 单容器 → Dockerfile 构建 Flask 计数应用 → Compose 三服务编排 → 镜像 save/load 迁移 | 已在本机 WSL2 + Docker 29.1.3 跑通，5 个阶段日志齐全 |
 | [02-function-calling-and-fastmcp](02-function-calling-and-fastmcp) | day01–day02：手工 Function Calling 七步 → 东方财富行情工具 → FastMCP 发布 MCP server（两种传输、三组件、中间件）→ PC 文件助手 → LLM 经 MCP Host 调工具 | 已在本机 Windows + Python 3.11 + fastmcp 2.14.7 + DeepSeek 真跑，7 个阶段日志齐全 |
 | [03-langchain-agent-engineering](03-langchain-agent-engineering) | day03–day07 串成一条电商客服案例：Agents/Models/Messages → 流式与结构化输出 → 工具与短期记忆与护栏 → MCP 与 HITL → 中间件与长期记忆与上下文工程 → 多智能体 → 综合案例 | 已在本机 Windows + Python 3.11.9 + LangChain 1.4.9 + DeepSeek 真跑，7 个阶段 + 1 个案例日志齐全 |
+| [04-mealie-second-dev-and-prod-deploy](04-mealie-second-dev-and-prod-deploy) | day08–day12 串成一条 Mealie 二次开发链路：difficulty 字段扩展（迁移→ORM→Schema→路由→前端）→ AI 摘要接口（结构化输出 + DeepSeek JSON 模式降级）→ 生产部署（多阶段 Dockerfile + Compose 三容器 + nginx + 重启不丢数据 + pg_dump） | 已在本机 WSL2 Ubuntu 24.04 + Docker 29.1.3 + PostgreSQL 15 真跑，镜像构建 52 步成功、三容器 healthy、全链路 200，12 份日志 + 改动 patch 齐全 |
 
 ## 约定
 

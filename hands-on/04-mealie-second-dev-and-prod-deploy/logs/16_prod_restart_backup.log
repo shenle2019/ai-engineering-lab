@@ -1,0 +1,24 @@
+=== 2026-11-11 13:12:17 restart mealie ===
+ Container mealie_app  Restarting
+ Container mealie_app  Started
+wait 1: starting
+wait 2: starting
+wait 3: starting
+wait 4: healthy
+=== 2026-11-11 13:12:35 verify data survived restart ===
+fan-qie-chao-dan-e2e-hard|hard
+--- recipe readable through nginx ---
+about=200
+=== 2026-11-11 13:12:35 pg_dump backup ===
+-rw-r--r-- 1 root root 135K Nov 11 13:12 /opt/mealie/backups/mealie_20261111_131235.sql
+--- backup head ---
+--
+-- PostgreSQL database dump
+--
+
+\restrict Nak0UKUNjF4YWyapzTU7CWZ18SSJzDp7Qeir3UcjamDhFAfDYMvxgVIS87vrUQR
+--- backup tail ---
+
+\unrestrict Nak0UKUNjF4YWyapzTU7CWZ18SSJzDp7Qeir3UcjamDhFAfDYMvxgVIS87vrUQR
+
+=== 2026-11-11 13:12:36 done ===

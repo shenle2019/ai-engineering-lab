@@ -1,0 +1,58 @@
+START 2026-11-11 12:25:53
+Sending build context to Docker daemon  59.23MB
+Step 1/52 : FROM node:24@sha256:80fc934952c8f1b2b4d39907af7211f8a9fff1a4c2cf673fb49099292c251cec     AS frontend-builder
+Step 2/52 : WORKDIR /frontend
+Step 3/52 : COPY frontend .
+Step 4/52 : RUN yarn install     --prefer-offline     --frozen-lockfile     --non-interactive     --production=false     --network-timeout 1000000
+Step 5/52 : RUN yarn generate
+Step 6/52 : FROM python:3.12-slim@sha256:7026274c107626d7e940e0e5d6730481a4600ae95d5ca7eb532dd4180313fea9     AS python-base
+Step 7/52 : ENV MEALIE_HOME="/app"
+Step 8/52 : ENV PYTHONUNBUFFERED=1     PYTHONDONTWRITEBYTECODE=1     PIP_NO_CACHE_DIR=off     PIP_DISABLE_PIP_VERSION_CHECK=on     PIP_DEFAULT_TIMEOUT=100     VENV_PATH="/opt/mealie"
+Step 9/52 : ARG PIP_INDEX_URL=https://mirrors.aliyun.com/pypi/simple/
+Step 10/52 : ARG UV_INDEX_URL=https://mirrors.aliyun.com/pypi/simple/
+Step 11/52 : ENV PIP_INDEX_URL=${PIP_INDEX_URL}     UV_INDEX_URL=${UV_INDEX_URL}     UV_DEFAULT_INDEX=${UV_INDEX_URL}
+Step 12/52 : ENV PATH="$VENV_PATH/bin:$PATH"
+Step 13/52 : RUN useradd -u 911 -U -d $MEALIE_HOME -s /bin/bash abc     && usermod -G users abc     && mkdir $MEALIE_HOME
+Step 14/52 : FROM python-base AS backend-builder
+Step 15/52 : RUN apt-get update     && apt-get install --no-install-recommends -y     curl     && rm -rf /var/lib/apt/lists/*
+Step 16/52 : RUN pip install uv
+Step 17/52 : WORKDIR /mealie
+Step 18/52 : COPY uv.lock pyproject.toml ./
+Step 19/52 : COPY mealie ./mealie
+Step 20/52 : COPY --from=frontend-builder /frontend/dist ./mealie/frontend
+Step 21/52 : RUN uv build --out-dir dist
+Step 22/52 : RUN uv export --no-editable --no-emit-project --extra pgsql --format requirements-txt --output-file dist/requirements.txt     && MEALIE_VERSION=$(python -c "import tomllib; print(tomllib.load(open('pyproject.toml', 'rb'))['project']['version'])")     && echo "mealie[pgsql]==${MEALIE_VERSION} \\" >> dist/requirements.txt     && pip hash dist/mealie-${MEALIE_VERSION}-py3-none-any.whl | tail -n1 | tr -d '\n' >> dist/requirements.txt     && echo " \\" >> dist/requirements.txt     && pip hash dist/mealie-${MEALIE_VERSION}.tar.gz | tail -n1 >> dist/requirements.txt
+Step 23/52 : FROM scratch AS packages
+Step 24/52 : COPY --from=backend-builder /mealie/dist /
+Step 25/52 : FROM python-base AS venv-builder-base
+Step 26/52 : RUN apt-get update     && apt-get install --no-install-recommends -y     build-essential     libpq-dev     libwebp-dev     ffmpeg     libsasl2-dev libldap2-dev libssl-dev     gnupg gnupg2 gnupg1     && rm -rf /var/lib/apt/lists/*
+Step 27/52 : RUN python3 -m venv --upgrade-deps $VENV_PATH
+Step 28/52 : FROM venv-builder-base AS venv-builder
+Step 29/52 : COPY --from=packages * /dist/
+Step 30/52 : RUN . $VENV_PATH/bin/activate     && pip install --require-hashes -r /dist/requirements.txt --find-links /dist
+Successfully built jstyleson paho-mqtt python-ldap
+Step 31/52 : FROM python-base AS production
+Step 32/52 : ENV PRODUCTION=true
+Step 33/52 : ENV TESTING=false
+Step 34/52 : ARG COMMIT
+Step 35/52 : ENV GIT_COMMIT_HASH=$COMMIT
+Step 36/52 : RUN apt-get update     && apt-get install --no-install-recommends -y     curl     ffmpeg     gosu     iproute2     libldap-common     libldap2     && rm -rf /var/lib/apt/lists/*
+Step 37/52 : RUN mkdir -p /run/secrets
+Step 38/52 : COPY --from=venv-builder $VENV_PATH $VENV_PATH
+Step 39/52 : ENV NLTK_DATA="/nltk_data/"
+Step 40/52 : RUN mkdir -p $NLTK_DATA
+Step 41/52 : RUN python -m nltk.downloader -d $NLTK_DATA averaged_perceptron_tagger_eng
+Step 42/52 : VOLUME [ "$MEALIE_HOME/data/" ]
+Step 43/52 : ENV APP_PORT=9000
+Step 44/52 : EXPOSE ${APP_PORT}
+Step 45/52 : COPY ./docker/healthcheck.sh $MEALIE_HOME/healthcheck.sh
+Step 46/52 : RUN chmod +x $MEALIE_HOME/healthcheck.sh
+Step 47/52 : HEALTHCHECK CMD $MEALIE_HOME/healthcheck.sh
+Step 48/52 : ENV HOST 0.0.0.0
+Step 49/52 : EXPOSE ${APP_PORT}
+Step 50/52 : COPY ./docker/entry.sh $MEALIE_HOME/run.sh
+Step 51/52 : RUN chmod +x $MEALIE_HOME/run.sh
+Step 52/52 : ENTRYPOINT ["/app/run.sh"]
+Successfully built 21a75d299236
+Successfully tagged mealie:3.15.1-custom
+END 2026-11-11 12:50:51

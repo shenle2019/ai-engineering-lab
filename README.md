@@ -19,11 +19,11 @@ Python 山顶会三期的学习仓库：**课件笔记** + **实操复刻记录*
 | LangChain | day05 | LangChain 结构化输出和流式输出 | 05-LangChain流式传输与结构化输出.md | 同上 |
 | LangChain | day06 | LangChain 高级组件之工具 / 短期记忆 / 护栏 / MCP / 人机交互 | 06-LangChain工具-短期记忆-护栏-MCP与人机交互.md | 同上 |
 | LangChain | day07 | LangChain 高级组件之中间件 / 运行时 / 上下文工程 / 长期记忆 | 07-LangChain中间件-长期记忆-上下文工程与多智能体.md | 同上 |
-| 项目二次开发 | day08 | GitHub 项目二次开发与 Mealie 本地部署（工具链、Git、uv、Docker） | 08-GitHub项目二次开发与Mealie本地部署.md | 待做 |
-| 项目二次开发 | day09 | Mealie 项目结构与 uv / yarn 本地开发 | 09-Mealie项目结构与uv本地开发环境.md | 待做 |
-| 项目二次开发 | day10 | Mealie 源码分析：启动、配置、路由与数据模型 | 10-Mealie源码分析-启动配置路由与数据模型.md | 待做 |
-| 项目二次开发 | day11 | Nuxt 框架与 Mealie 字段扩展二次开发 | 11-Nuxt框架与Mealie字段扩展二次开发.md | 待做 |
-| 项目二次开发 | day12 | AI 功能二次开发与生产环境部署 | 12-Mealie的AI摘要功能开发与生产部署.md | 待做 |
+| 项目二次开发 | day08 | GitHub 项目二次开发与 Mealie 本地部署（工具链、Git、uv、Docker） | 08-GitHub项目二次开发与Mealie本地部署.md | 04-mealie-second-dev-and-prod-deploy |
+| 项目二次开发 | day09 | Mealie 项目结构与 uv / yarn 本地开发 | 09-Mealie项目结构与uv本地开发环境.md | 同上 |
+| 项目二次开发 | day10 | Mealie 源码分析：启动、配置、路由与数据模型 | 10-Mealie源码分析-启动配置路由与数据模型.md | 同上 |
+| 项目二次开发 | day11 | Nuxt 框架与 Mealie 字段扩展二次开发 | 11-Nuxt框架与Mealie字段扩展二次开发.md | 同上 |
+| 项目二次开发 | day12 | AI 功能二次开发与生产环境部署 | 12-Mealie的AI摘要功能开发与生产部署.md | 同上 |
 | LangGraph | day13 | LangGraph 之智能导游案例与本地服务 | 待做 | 待做 |
 | LangGraph | day14 | LangGraph 核心架构模式和子图 | 待做 | 待做 |
 | LangGraph | day15 | LangGraph 之子图 / 记忆 / 中断 / 持久化 | 待做 | 待做 |
@@ -56,6 +56,7 @@ Python 山顶会三期的学习仓库：**课件笔记** + **实操复刻记录*
 | [hands-on/01-linux-docker-compose-deploy](hands-on/01-linux-docker-compose-deploy) | 把预习三课串成一条链路：Linux 基础操作 → redis/nginx 单容器 → Dockerfile 构建 Flask 访问计数应用 → Compose 编排 redis+web+nginx → 镜像 commit/save/load 迁移 | 在本机 WSL2 Ubuntu 24.04 + Docker 29.1.3 真机跑通，5 个阶段脚本 + 运行日志存于目录内 |
 | [hands-on/02-function-calling-and-fastmcp](hands-on/02-function-calling-and-fastmcp) | 把 day01–day02 串成一条链路：手工 Function Calling 七步 → 东方财富行情工具（字段校准）→ FastMCP 发布为 MCP server（两种传输、三组件、中间件）→ PC 文件助手 → LLM 经 MCP Host 调工具 | 本机 Windows + Python 3.11 + fastmcp 2.14.7 + DeepSeek 真跑，7 个阶段脚本 + 运行日志存于目录内；同时修正了课件中 f43 除数、f116 含义两处错误 |
 | [hands-on/03-langchain-agent-engineering](hands-on/03-langchain-agent-engineering) | 把 day03–day07 串成一条电商售后客服案例：Agents/Models/Messages 基础 → 四种流式模式与结构化输出纠错 → ToolRuntime/短期记忆/PII 与自定义护栏 → FastMCP 工具经 MCP 接入 → HITL 退款审批 → 中间件与长期记忆与上下文工程 → 两种多智能体做法 → 综合案例（护栏+双记忆+HITL+多智能体+流式+工单结构化输出） | 本机 Windows + Python 3.11.9 + LangChain 1.4.9 + DeepSeek 真跑，7 个阶段脚本 + 1 个综合案例 + 8 份运行日志存于目录内 |
+| [hands-on/04-mealie-second-dev-and-prod-deploy](hands-on/04-mealie-second-dev-and-prod-deploy) | 把 day08–day12 串成一条 Mealie 二次开发链路：字段扩展 difficulty（迁移→ORM→Schema→路由→前端）→ AI 摘要接口（OpenAIRecipeSummary + Prompt + DeepSeek JSON 模式降级 + 前端卡片）→ 生产部署（多阶段 Dockerfile + Compose 三容器 + nginx 反代 + 重启不丢数据 + pg_dump） | 本机 WSL2 Ubuntu 24.04 + Docker 29.1.3 + PostgreSQL 15 + Nuxt 4 真跑：镜像构建 52 步成功、三容器 healthy、difficulty 与 AI 摘要走 nginx 全链路 200、12 份日志 + 完整改动 patch 存于目录内 |
 
 ## 运行环境
 
@@ -87,6 +88,6 @@ Python 山顶会三期的学习仓库：**课件笔记** + **实操复刻记录*
 ## 约定
 
 - 笔记文件按知识点命名，用 `01-`～`12-` 数字前缀表示学习顺序，不带 `dayXX`、`预习X` 这类课次前缀
-- 实操目录按关键知识点命名，同样带顺序前缀（`01-`、`02-`、`03-`），一个实操一个子目录，内含源码、脚本、日志
+- 实操目录按关键知识点命名，同样带顺序前缀（`01-`、`02-`、`03-`、`04-`），一个实操一个子目录，内含源码、脚本、日志
 - 只记录真跑通的内容；没跑起来的部分在对应 README 里写明现象与已尝试步骤
 - 目录名统一英文 kebab-case，避免中文路径在 URL 中被编码

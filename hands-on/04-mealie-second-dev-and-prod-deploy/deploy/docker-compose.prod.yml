@@ -1,0 +1,62 @@
+name: mealie-prod
+
+# Production stack for the customized Mealie image (difficulty field + AI summary).
+# Start with: docker compose --env-file .env.production -f docker-compose.prod.yml up -d
+services:
+  mealie:
+    image: mealie:3.15.1-custom
+    container_name: mealie_app
+    restart: always
+    env_file: .env.production
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./data/mealie:/app/data
+    # Only bind to loopback: the public entrypoint is nginx.
+    ports:
+      - "127.0.0.1:9925:9000"
+    healthcheck:
+      test: ["CMD", "/app/healthcheck.sh"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    networks:
+      - mealie
+
+  postgres:
+    image: postgres:15
+    container_name: mealie_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - ./postgres/data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - mealie
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: mealie_nginx
+    restart: always
+    depends_on:
+      mealie:
+        condition: service_healthy
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+    ports:
+      - "8080:80"
+    networks:
+      - mealie
+
+networks:
+  mealie:
+    driver: bridge

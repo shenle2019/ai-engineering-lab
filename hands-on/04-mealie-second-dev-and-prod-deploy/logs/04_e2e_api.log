@@ -1,0 +1,42 @@
+
+>>> GET /api/app/about -> 200
+{"production":false,"version":"develop","demoStatus":false,"allowSignup":true,"allowPasswordLogin":true,"defaultGroupSlug":null,"defaultHouseholdSlug":null,"enableOidc":false,"oidcRedirect":false,"oidcProviderName":"OAuth","enableOpenai":true,"enableOpenaiImageServices":true,"enableOpenaiTranscriptionServices":true,"tokenTime":48}
+
+>>> POST /api/auth/token (before register) -> 200
+{"access_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5Y2NlNGI1Mi0wNWJhLTQzNGMtOGEwOC1jNmJkMTM4Nzc5ZGYiLCJleHAiOjE3OTQ1MzgyMzQsImlzcyI6Im1lYWxpZSJ9.b8TUj0ePFThzvceQGbnkRGiT8qI8Dtg7FC59ZqTEt7k","token_type":"bearer"}
+
+>>> POST /api/recipes (name only) -> 201
+"fan-qie-chao-dan-3"
+slug: fan-qie-chao-dan-3
+>>> difficulty before update = None
+
+>>> PUT /api/recipes/{slug} (difficulty=medium) -> 200
+{"id":"9d289fe8-8fce-4c00-afd0-332640e0bf3f","userId":"9cce4b52-05ba-434c-8a08-c6bd138779df","householdId":"b7d8e593-af91-4ebb-b5fd-4be6dcc1f947","groupId":"dd894c77-9b61-4e21-92a6-e0efb57f324e","name":"番茄炒蛋 E2E","slug":"fan-qie-chao-dan-e2e","image":null,"recipeServings":0.0,"recipeYieldQuantity":0.0,"recipeYield":"2 人份","totalTime":"15","prepTime":"5","cookTime":"10","performTime":null,"description":"家常快手菜，甜咸口。","difficulty":"medium","recipeCategory":[],"tags":[],"tools":[],"rating":null,"orgURL":null,"dateAdded":"2026-11-11","dateUpdated":"2026-11-11T02:50:34.325705Z","createdAt":"2026-11-11T02:50:34.076727Z","updatedAt":"2026-11-11T02:50:34.329404Z","lastMade":null,"recipeIngredient":[{"quantity":0.0,"unit":null,"food":null,"referencedRecipe":null,"note":"","display":"","title":null,"originalText":"番茄 2 个","referenceId":"9a0e6fac-0b8c-49a9-96f5-ed5d6b8b3794"},{"quantity":0.0,"unit":null,"food":null,"referencedRecipe":null,"note":"","display":"","title":null,"originalText":"鸡蛋 3 个","referenceId":"14dc6c65-cc76-483d-b02e-dc5842dc62ef"},{"quantity":0.0,"unit":null,"food":null,"referencedRecipe":null,"note":"","display":"","title":null,"originalText":"白糖 1 小勺","referenceId":"2ea6ef
+>>> difficulty after update = 'medium'
+
+>>> PUT /api/recipes/{slug} (difficulty=hard) -> 200
+{"id":"9d289fe8-8fce-4c00-afd0-332640e0bf3f","userId":"9cce4b52-05ba-434c-8a08-c6bd138779df","householdId":"b7d8e593-af91-4ebb-b5fd-4be6dcc1f947","groupId":"dd894c77-9b61-4e21-92a6-e0efb57f324e","name":"番茄炒蛋 E2E Hard","slug":"fan-qie-chao-dan-e2e-hard","image":null,"recipeServings":0.0,"recipeYieldQuantity":0.0,"recipeYield":"2 人份","totalTime":"15","prepTime":"5","cookTime":"10","performTime":null,"description":"家常快手菜，甜咸口。","difficulty":"hard","recipeCategory":[],"tags":[],"tools":[],"rating":null,"orgURL":null,"dateAdded":"2026-11-11","dateUpdated":"2026-11-11T02:50:34.564358Z","createdAt":"2026-11-11T02:50:34.076727Z","updatedAt":"2026-11-11T02:50:34.568534Z","lastMade":null,"recipeIngredient":[{"quantity":0.0,"unit":null,"food":null,"referencedRecipe":null,"note":"","display":"","title":null,"originalText":"番茄 2 个","referenceId":"dccfca6a-3867-4f0e-9b96-249bdc97fc2e"},{"quantity":0.0,"unit":null,"food":null,"referencedRecipe":null,"note":"","display":"","title":null,"originalText":"鸡蛋 3 个","referenceId":"c81b173f-44e5-4872-b05e-6d652cc60e90"},{"quantity":0.0,"unit":null,"food":null,"referencedRecipe":null,"note":"","display":"","title":null,"originalText":"白糖 1 小勺","referenceId"
+>>> difficulty after second update = 'hard'
+
+>>> POST /api/recipes/{slug}/ai-summary -> 200
+{"summary":"番茄炒蛋 E2E Hard 是一道甜咸口的家常快手菜，准备约 5 分钟、烹饪约 10 分钟，总共 15 分钟就能上桌，适合今晚快速做饭。步骤只有三步：先切番茄并打散鸡蛋，再热锅炒散鸡蛋盛出，最后炒番茄出汁加糖后回锅鸡蛋炒匀。","difficulty":"easy","estimated_time":"15 分钟","highlights":["总耗时约 15 分钟，工作日晚餐压力小","只需番茄、鸡蛋和白糖三样食材","甜咸口调味，适合配米饭"],"warnings":["调料未注明用量，只有白糖标注了 1 小勺，油和盐的用量缺失","recipe_servings 为 0，份量信息仅靠 recipe_yield 的 2 人份判断","炒鸡蛋时火候偏大容易炒老，番茄需炒出汁后再回锅鸡蛋以免过熟"]}
+
+>>> AI SUMMARY JSON <<<
+{
+  "summary": "番茄炒蛋 E2E Hard 是一道甜咸口的家常快手菜，准备约 5 分钟、烹饪约 10 分钟，总共 15 分钟就能上桌，适合今晚快速做饭。步骤只有三步：先切番茄并打散鸡蛋，再热锅炒散鸡蛋盛出，最后炒番茄出汁加糖后回锅鸡蛋炒匀。",
+  "difficulty": "easy",
+  "estimated_time": "15 分钟",
+  "highlights": [
+    "总耗时约 15 分钟，工作日晚餐压力小",
+    "只需番茄、鸡蛋和白糖三样食材",
+    "甜咸口调味，适合配米饭"
+  ],
+  "warnings": [
+    "调料未注明用量，只有白糖标注了 1 小勺，油和盐的用量缺失",
+    "recipe_servings 为 0，份量信息仅靠 recipe_yield 的 2 人份判断",
+    "炒鸡蛋时火候偏大容易炒老，番茄需炒出汁后再回锅鸡蛋以免过熟"
+  ]
+}
+
+>>> POST /api/recipes/does-not-exist/ai-summary -> 404
+{"detail":{"message":"No Entry Found","error":true,"exception":null}}

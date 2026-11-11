@@ -1,0 +1,728 @@
+diff --git a/.dockerignore b/.dockerignore
+index 602e1dd..70953b6 100644
+--- a/.dockerignore
++++ b/.dockerignore
+@@ -31,4 +31,12 @@ venv
+ */mealie/.temp
+ /mealie/frontend/
+ 
++# Local build artifacts and runtime data must not enter the build context
++frontend/.nuxt
++frontend/.output
++frontend/.vite
++frontend/test-results
++docker/data
++docker/postgres
++
+ crowdin.yml
+diff --git a/.gitattributes b/.gitattributes
+index 731afcd..ff90047 100644
+--- a/.gitattributes
++++ b/.gitattributes
+@@ -1,2 +1,5 @@
+ *.css linguist-detectable=false
+ *.html linguist-detectable=false
++
++# Shell scripts must stay LF even when checked out on Windows
++*.sh text eol=lf
+diff --git a/docker/Dockerfile b/docker/Dockerfile
+index bc91cef..fd298d2 100644
+--- a/docker/Dockerfile
++++ b/docker/Dockerfile
+@@ -33,6 +33,14 @@ ENV PYTHONUNBUFFERED=1 \
+     PIP_DEFAULT_TIMEOUT=100 \
+     VENV_PATH="/opt/mealie"
+ 
++# pypi.org is unreachable/slow from some networks; default to a mirror and allow
++# overriding it with --build-arg PIP_INDEX_URL=... at build time.
++ARG PIP_INDEX_URL=https://mirrors.aliyun.com/pypi/simple/
++ARG UV_INDEX_URL=https://mirrors.aliyun.com/pypi/simple/
++ENV PIP_INDEX_URL=${PIP_INDEX_URL} \
++    UV_INDEX_URL=${UV_INDEX_URL} \
++    UV_DEFAULT_INDEX=${UV_INDEX_URL}
++
+ # prepend venv to path
+ ENV PATH="$VENV_PATH/bin:$PATH"
+ 
+@@ -145,7 +153,8 @@ ENV APP_PORT=9000
+ EXPOSE ${APP_PORT}
+ 
+ COPY ./docker/healthcheck.sh $MEALIE_HOME/healthcheck.sh
+-RUN chmod +x $MEALIE_HOME/healthcheck.sh
++# Strip CR so the shebang still works when the repo is checked out on Windows.
++RUN sed -i 's/\r$//' $MEALIE_HOME/healthcheck.sh && chmod +x $MEALIE_HOME/healthcheck.sh
+ HEALTHCHECK CMD $MEALIE_HOME/healthcheck.sh
+ 
+ ENV HOST 0.0.0.0
+@@ -153,5 +162,5 @@ ENV HOST 0.0.0.0
+ EXPOSE ${APP_PORT}
+ COPY ./docker/entry.sh $MEALIE_HOME/run.sh
+ 
+-RUN chmod +x $MEALIE_HOME/run.sh
++RUN sed -i 's/\r$//' $MEALIE_HOME/run.sh && chmod +x $MEALIE_HOME/run.sh
+ ENTRYPOINT ["/app/run.sh"]
+diff --git a/frontend/app/components/Domain/Recipe/RecipePage/RecipePage.vue b/frontend/app/components/Domain/Recipe/RecipePage/RecipePage.vue
+index e7fd9f9..cd4d3e4 100644
+--- a/frontend/app/components/Domain/Recipe/RecipePage/RecipePage.vue
++++ b/frontend/app/components/Domain/Recipe/RecipePage/RecipePage.vue
+@@ -51,6 +51,9 @@
+           <div>
+             <RecipePageInfoEditor v-if="isEditMode" v-model="recipe" />
+           </div>
++          <div v-if="!isEditForm && !isCookMode">
++            <RecipePageAiSummary :slug="recipe.slug" />
++          </div>
+           <div>
+             <RecipePageEditorToolbar v-if="isEditForm" v-model="recipe" />
+           </div>
+@@ -204,6 +207,7 @@ import RecipePageOrganizers from "./RecipePageParts/RecipePageOrganizers.vue";
+ import RecipePageParseDialog from "./RecipePageParts/RecipePageParseDialog.vue";
+ import RecipePageScale from "./RecipePageParts/RecipePageScale.vue";
+ import RecipePageInfoEditor from "./RecipePageParts/RecipePageInfoEditor.vue";
++import RecipePageAiSummary from "./RecipePageParts/RecipePageAiSummary.vue";
+ import RecipePageComments from "./RecipePageParts/RecipePageComments.vue";
+ import RecipePrintContainer from "~/components/Domain/Recipe/RecipePrintContainer.vue";
+ import {
+diff --git a/frontend/app/components/Domain/Recipe/RecipePage/RecipePageParts/RecipePageAiSummary.vue b/frontend/app/components/Domain/Recipe/RecipePage/RecipePageParts/RecipePageAiSummary.vue
+new file mode 100644
+index 0000000..a7e51ec
+--- /dev/null
++++ b/frontend/app/components/Domain/Recipe/RecipePage/RecipePageParts/RecipePageAiSummary.vue
+@@ -0,0 +1,120 @@
++<template>
++  <v-card
++    v-if="isOwnGroup"
++    class="mt-4 d-print-none"
++    variant="tonal"
++    color="primary"
++  >
++    <v-card-title class="d-flex align-center flex-wrap ga-2">
++      <v-icon start>
++        {{ $globals.icons.robot }}
++      </v-icon>
++      <span>{{ $t("recipe.ai-summary.title") }}</span>
++      <v-spacer />
++      <v-btn
++        v-if="summary"
++        size="small"
++        variant="text"
++        :loading="loading"
++        @click="generate"
++      >
++        {{ $t("recipe.ai-summary.regenerate") }}
++      </v-btn>
++      <v-btn
++        v-else
++        size="small"
++        color="primary"
++        :loading="loading"
++        @click="generate"
++      >
++        {{ $t("recipe.ai-summary.generate") }}
++      </v-btn>
++    </v-card-title>
++
++    <v-card-text>
++      <div v-if="error" class="text-error">
++        {{ $t("recipe.ai-summary.failed") }}
++      </div>
++      <p v-else-if="!summary" class="text-medium-emphasis mb-0">
++        {{ $t("recipe.ai-summary.description") }}
++      </p>
++      <template v-else>
++        <p class="text-body-1">
++          {{ summary.summary }}
++        </p>
++        <div class="d-flex flex-wrap ga-2 mb-3">
++          <v-chip size="small" color="primary" variant="flat">
++            {{ $t("recipe.ai-summary.difficulty") }}: {{ difficultyLabel }}
++          </v-chip>
++          <v-chip size="small" variant="outlined">
++            {{ $t("recipe.ai-summary.estimated-time") }}: {{ summary.estimated_time }}
++          </v-chip>
++        </div>
++        <template v-if="summary.highlights?.length">
++          <div class="text-subtitle-2 mb-1">
++            {{ $t("recipe.ai-summary.highlights") }}
++          </div>
++          <ul class="mb-3">
++            <li v-for="(item, index) in summary.highlights" :key="`highlight-${index}`">
++              {{ item }}
++            </li>
++          </ul>
++        </template>
++        <v-alert v-if="summary.warnings?.length" type="warning" variant="tonal" density="compact">
++          <div class="text-subtitle-2 mb-1">
++            {{ $t("recipe.ai-summary.warnings") }}
++          </div>
++          <ul>
++            <li v-for="(item, index) in summary.warnings" :key="`warning-${index}`">
++              {{ item }}
++            </li>
++          </ul>
++        </v-alert>
++      </template>
++    </v-card-text>
++  </v-card>
++</template>
++
++<script setup lang="ts">
++import type { OpenAIRecipeSummary } from "~/lib/api/types/openai";
++import { useUserApi } from "~/composables/api";
++import { useLoggedInState } from "~/composables/use-logged-in-state";
++
++const props = defineProps<{
++  slug: string;
++}>();
++
++const { t } = useI18n();
++const { isOwnGroup } = useLoggedInState();
++const api = useUserApi();
++
++const summary = ref<OpenAIRecipeSummary | null>(null);
++const loading = ref(false);
++const error = ref(false);
++
++const difficultyLabel = computed(() => {
++  const value = summary.value?.difficulty;
++  if (!value) {
++    return "";
++  }
++
++  return t(`recipe.ai-summary.difficulty-${value}`);
++});
++
++async function generate() {
++  loading.value = true;
++  error.value = false;
++
++  const { data, error: apiError } = await api.recipes.generateAiSummary(props.slug);
++
++  if (apiError || !data) {
++    summary.value = null;
++    error.value = true;
++  }
++  else {
++    summary.value = data;
++  }
++
++  loading.value = false;
++}
++</script>
+diff --git a/frontend/app/components/Domain/Recipe/RecipePage/RecipePageParts/RecipePageInfoCard.vue b/frontend/app/components/Domain/Recipe/RecipePage/RecipePageParts/RecipePageInfoCard.vue
+index 0591c1c..9d1d665 100644
+--- a/frontend/app/components/Domain/Recipe/RecipePage/RecipePageParts/RecipePageInfoCard.vue
++++ b/frontend/app/components/Domain/Recipe/RecipePage/RecipePageParts/RecipePageInfoCard.vue
+@@ -63,6 +63,11 @@
+                 class="mb-4"
+               />
+             </div>
++            <div v-if="recipe.difficulty" class="mx-6 mb-4 d-flex align-center">
++              <v-chip color="primary" variant="tonal" size="small">
++                {{ $t("recipe.difficulty") }}: {{ difficultyLabel }}
++              </v-chip>
++            </div>
+           </v-container>
+         </v-card-text>
+       </v-card>
+@@ -92,9 +97,22 @@ interface Props {
+   landscape: boolean;
+ }
+ 
+-withDefaults(defineProps<Props>(), {
++const props = withDefaults(defineProps<Props>(), {
+   recipeScale: 1,
+ });
+ 
++const { t } = useI18n();
++
++const difficultyLabel = computed(() => {
++  const value = props.recipe.difficulty;
++  if (!value) {
++    return "";
++  }
++
++  return ["easy", "medium", "hard"].includes(value)
++    ? t(`recipe.ai-summary.difficulty-${value}`)
++    : value;
++});
++
+ const { isOwnGroup } = useLoggedInState();
+ </script>
+diff --git a/frontend/app/components/Domain/Recipe/RecipePage/RecipePageParts/RecipePageInfoEditor.vue b/frontend/app/components/Domain/Recipe/RecipePage/RecipePageParts/RecipePageInfoEditor.vue
+index c502180..508c54e 100644
+--- a/frontend/app/components/Domain/Recipe/RecipePage/RecipePageParts/RecipePageInfoEditor.vue
++++ b/frontend/app/components/Domain/Recipe/RecipePage/RecipePageParts/RecipePageInfoEditor.vue
+@@ -67,6 +67,16 @@
+         density="compact"
+         variant="underlined"
+       />
++      <v-select
++        v-model="recipe.difficulty"
++        :items="difficultyItems"
++        :label="$t('recipe.difficulty')"
++        clearable
++        density="compact"
++        variant="underlined"
++        hide-details
++        style="min-width: 160px; max-width: 200px"
++      />
+     </div>
+     <v-textarea
+       v-model="recipe.description"
+@@ -85,4 +95,12 @@ import type { NoUndefinedField } from "~/lib/api/types/non-generated";
+ import type { Recipe } from "~/lib/api/types/recipe";
+ 
+ const recipe = defineModel<NoUndefinedField<Recipe>>({ required: true });
++
++const { t } = useI18n();
++
++const difficultyItems = computed(() => [
++  { title: t("recipe.ai-summary.difficulty-easy"), value: "easy" },
++  { title: t("recipe.ai-summary.difficulty-medium"), value: "medium" },
++  { title: t("recipe.ai-summary.difficulty-hard"), value: "hard" },
++]);
+ </script>
+diff --git a/frontend/app/lang/messages/en-US.json b/frontend/app/lang/messages/en-US.json
+index db06e83..7dd1b35 100644
+--- a/frontend/app/lang/messages/en-US.json
++++ b/frontend/app/lang/messages/en-US.json
+@@ -481,6 +481,21 @@
+   "recipe": {
+     "add-key": "Add Key",
+     "add-to-favorites": "Add to Favorites",
++    "ai-summary": {
++      "title": "AI Summary",
++      "description": "Let AI read this recipe and summarize it for you. Nothing is saved back to the recipe.",
++      "generate": "Generate Summary",
++      "regenerate": "Regenerate",
++      "difficulty": "Difficulty",
++      "estimated-time": "Estimated time",
++      "highlights": "Highlights",
++      "warnings": "Watch out for",
++      "failed": "Unable to generate a summary. Please try again later.",
++      "difficulty-easy": "Easy",
++      "difficulty-medium": "Medium",
++      "difficulty-hard": "Hard",
++      "difficulty-unknown": "Unknown"
++    },
+     "api-extras": "API Extras",
+     "calories": "Calories",
+     "calories-suffix": "calories",
+@@ -494,6 +509,7 @@
+     "admin-delete-confirmation": "You're about to delete a recipe that isn't yours using admin permissions. Are you sure?",
+     "delete-recipe": "Delete Recipe",
+     "description": "Description",
++    "difficulty": "Difficulty",
+     "disable-amount": "Disable Ingredient Amounts",
+     "disable-comments": "Disable Comments",
+     "duplicate": "Duplicate recipe",
+diff --git a/frontend/app/lang/messages/zh-CN.json b/frontend/app/lang/messages/zh-CN.json
+index f3604c2..5a974e8 100644
+--- a/frontend/app/lang/messages/zh-CN.json
++++ b/frontend/app/lang/messages/zh-CN.json
+@@ -480,6 +480,21 @@
+   "recipe": {
+     "add-key": "添加一个新的关键词",
+     "add-to-favorites": "添加到收藏夹",
++    "ai-summary": {
++      "title": "AI 摘要",
++      "description": "让 AI 读一遍这道菜谱并生成摘要，结果不会写回菜谱。",
++      "generate": "生成摘要",
++      "regenerate": "重新生成",
++      "difficulty": "难度",
++      "estimated-time": "预计用时",
++      "highlights": "亮点",
++      "warnings": "注意事项",
++      "failed": "生成摘要失败，请稍后重试。",
++      "difficulty-easy": "简单",
++      "difficulty-medium": "中等",
++      "difficulty-hard": "困难",
++      "difficulty-unknown": "未知"
++    },
+     "api-extras": "API附加功能",
+     "calories": "卡路里",
+     "calories-suffix": "卡路里",
+@@ -493,6 +508,7 @@
+     "admin-delete-confirmation": "您即将使用管理员权限删除一个不属于您的食谱。您确定要删除吗？",
+     "delete-recipe": "删除食谱",
+     "description": "描述",
++    "difficulty": "难度",
+     "disable-amount": "关闭显示成分数量",
+     "disable-comments": "禁用评论",
+     "duplicate": "重复食谱",
+diff --git a/frontend/app/lib/api/types/openai.ts b/frontend/app/lib/api/types/openai.ts
+index a18ae9b..8dbcf93 100644
+--- a/frontend/app/lib/api/types/openai.ts
++++ b/frontend/app/lib/api/types/openai.ts
+@@ -37,6 +37,13 @@ export interface OpenAIRecipeNotes {
+   title?: string | null;
+   text: string;
+ }
++export interface OpenAIRecipeSummary {
++  summary: string;
++  difficulty: "easy" | "medium" | "hard" | "unknown";
++  estimated_time: string;
++  highlights?: string[];
++  warnings?: string[];
++}
+ export interface OpenAIText {
+   text: string;
+ }
+diff --git a/frontend/app/lib/api/types/recipe.ts b/frontend/app/lib/api/types/recipe.ts
+index d869c89..bfbf360 100644
+--- a/frontend/app/lib/api/types/recipe.ts
++++ b/frontend/app/lib/api/types/recipe.ts
+@@ -241,6 +241,7 @@ export interface Recipe {
+   cookTime?: string | null;
+   performTime?: string | null;
+   description?: string | null;
++  difficulty?: string | null;
+   recipeCategory?: RecipeCategory[] | null;
+   tags?: RecipeTag[] | null;
+   tools?: RecipeTool[];
+@@ -323,6 +324,7 @@ export interface RecipeSummary {
+   cookTime?: string | null;
+   performTime?: string | null;
+   description?: string | null;
++  difficulty?: string | null;
+   recipeCategory?: RecipeCategory[] | null;
+   tags?: RecipeTag[] | null;
+   tools?: RecipeTool[];
+diff --git a/frontend/app/lib/api/user/recipes/recipe.ts b/frontend/app/lib/api/user/recipes/recipe.ts
+index 70ae3aa..df8c918 100644
+--- a/frontend/app/lib/api/user/recipes/recipe.ts
++++ b/frontend/app/lib/api/user/recipes/recipe.ts
+@@ -19,6 +19,7 @@ import type {
+   RecipeTimelineEventUpdate,
+ } from "~/lib/api/types/recipe";
+ import type { SSEDataEventDone, SSEDataEventMessage } from "~/lib/api/types/response";
++import type { OpenAIRecipeSummary } from "~/lib/api/types/openai";
+ import type { ApiRequestInstance, PaginationData, RequestResponse } from "~/lib/api/types/non-generated";
+ import { SSEDataEventStatus } from "~/lib/api/types/non-generated";
+ 
+@@ -51,6 +52,7 @@ const routes = {
+   recipesRecipeSlug: (recipe_slug: string) => `${prefix}/recipes/${recipe_slug}`,
+   recipesRecipeSlugImage: (recipe_slug: string) => `${prefix}/recipes/${recipe_slug}/image`,
+   recipesRecipeSlugAssets: (recipe_slug: string) => `${prefix}/recipes/${recipe_slug}/assets`,
++  recipesRecipeSlugAiSummary: (recipe_slug: string) => `${prefix}/recipes/${recipe_slug}/ai-summary`,
+ 
+   recipesSlugComments: (slug: string) => `${prefix}/recipes/${slug}/comments`,
+   recipesSlugCommentsId: (slug: string, id: number) => `${prefix}/recipes/${slug}/comments/${id}`,
+@@ -130,6 +132,10 @@ export class RecipeAPI extends BaseCRUDAPI<CreateRecipe, Recipe, Recipe> {
+     return await this.requests.post<RecipeAsset>(routes.recipesRecipeSlugAssets(recipeSlug), formData);
+   }
+ 
++  async generateAiSummary(recipeSlug: string) {
++    return await this.requests.post<OpenAIRecipeSummary>(routes.recipesRecipeSlugAiSummary(recipeSlug), {});
++  }
++
+   updateImage(slug: string, fileObject: File) {
+     const formData = new FormData();
+     formData.append("image", fileObject);
+diff --git a/mealie/alembic/versions/2026-11-11-10.14.22_fc7cdab5b7a2_add_recipe_difficulty.py b/mealie/alembic/versions/2026-11-11-10.14.22_fc7cdab5b7a2_add_recipe_difficulty.py
+new file mode 100644
+index 0000000..c9f0cd3
+--- /dev/null
++++ b/mealie/alembic/versions/2026-11-11-10.14.22_fc7cdab5b7a2_add_recipe_difficulty.py
+@@ -0,0 +1,35 @@
++"""add recipe difficulty
++
++Revision ID: fc7cdab5b7a2
++Revises: 4395a04f7784
++Create Date: 2026-11-11 10:14:22.120032
++
++"""
++import sqlalchemy as sa
++from alembic import op
++
++import mealie.db.migration_types
++
++# revision identifiers, used by Alembic.
++revision = 'fc7cdab5b7a2'
++down_revision: str | None = '4395a04f7784'
++branch_labels: str | tuple[str, ...] | None = None
++depends_on: str | tuple[str, ...] | None = None
++
++
++def upgrade():
++    # ### commands auto generated by Alembic - please adjust! ###
++    with op.batch_alter_table('recipes', schema=None) as batch_op:
++        batch_op.add_column(sa.Column('difficulty', sa.String(length=32), nullable=True))
++        batch_op.create_index(batch_op.f('ix_recipes_difficulty'), ['difficulty'], unique=False)
++
++    # ### end Alembic commands ###
++
++
++def downgrade():
++    # ### commands auto generated by Alembic - please adjust! ###
++    with op.batch_alter_table('recipes', schema=None) as batch_op:
++        batch_op.drop_index(batch_op.f('ix_recipes_difficulty'))
++        batch_op.drop_column('difficulty')
++
++    # ### end Alembic commands ###
+diff --git a/mealie/db/models/recipe/recipe.py b/mealie/db/models/recipe/recipe.py
+index 327b8cd..eeda748 100644
+--- a/mealie/db/models/recipe/recipe.py
++++ b/mealie/db/models/recipe/recipe.py
+@@ -80,6 +80,7 @@ class RecipeModel(SqlAlchemyBase, BaseMixins):
+     # General Recipe Properties
+     name: Mapped[str] = mapped_column(sa.String, nullable=False)
+     description: Mapped[str | None] = mapped_column(sa.String)
++    difficulty: Mapped[str | None] = mapped_column(sa.String(32), index=True)
+ 
+     image: Mapped[str | None] = mapped_column(sa.String)
+ 
+diff --git a/mealie/routes/recipe/recipe_crud_routes.py b/mealie/routes/recipe/recipe_crud_routes.py
+index 927352e..de7f49f 100644
+--- a/mealie/routes/recipe/recipe_crud_routes.py
++++ b/mealie/routes/recipe/recipe_crud_routes.py
+@@ -33,6 +33,7 @@ from mealie.routes._base import controller
+ from mealie.routes._base.routers import MealieCrudRoute, UserAPIRouter
+ from mealie.schema.cookbook.cookbook import ReadCookBook
+ from mealie.schema.make_dependable import make_dependable
++from mealie.schema.openai import OpenAIRecipeSummary
+ from mealie.schema.recipe import Recipe, ScrapeRecipe, ScrapeRecipeData
+ from mealie.schema.recipe.recipe import (
+     CreateRecipe,
+@@ -64,6 +65,7 @@ from mealie.services.event_bus_service.event_types import (
+     EventRecipeData,
+     EventTypes,
+ )
++from mealie.services.recipe.recipe_ai_summary_service import RecipeAISummaryService
+ from mealie.services.recipe.recipe_data_service import (
+     InvalidDomainError,
+     NotAnImageError,
+@@ -420,6 +422,28 @@ class RecipeController(BaseRecipeController):
+ 
+         return recipe
+ 
++    @router.post("/{slug}/ai-summary", response_model=OpenAIRecipeSummary)
++    async def generate_ai_summary(self, slug: str = Path(..., description="A recipe's slug or id")):
++        """Generate a read-only AI summary for a recipe. Nothing is persisted."""
++        if not self.settings.OPENAI_FEATURE.enabled:
++            raise HTTPException(
++                status_code=status.HTTP_400_BAD_REQUEST,
++                detail=ErrorResponse.respond(message="AI features are not enabled. Configure OPENAI_API_KEY."),
++            )
++
++        try:
++            recipe = self.service.get_one(slug)
++            summary_service = RecipeAISummaryService()
++            return await summary_service.generate(recipe)
++        except exceptions.RateLimitError as e:
++            raise HTTPException(
++                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
++                detail=ErrorResponse.respond(message=str(e)),
++            ) from e
++        except Exception as e:
++            self.handle_exceptions(e)
++            return None
++
+     @router.post("", status_code=201, response_model=str)
+     def create_one(self, data: CreateRecipe) -> str | None:
+         """Takes in a JSON string and loads data into the database as a new entry"""
+diff --git a/mealie/schema/openai/__init__.py b/mealie/schema/openai/__init__.py
+index 0f67fb8..96894ef 100644
+--- a/mealie/schema/openai/__init__.py
++++ b/mealie/schema/openai/__init__.py
+@@ -2,6 +2,7 @@
+ from .general import OpenAIText
+ from .recipe import OpenAIRecipe, OpenAIRecipeIngredient, OpenAIRecipeInstruction, OpenAIRecipeNotes
+ from .recipe_ingredient import OpenAIIngredient, OpenAIIngredients
++from .recipe_summary import OpenAIRecipeSummary
+ 
+ __all__ = [
+     "OpenAIIngredient",
+@@ -10,5 +11,6 @@ __all__ = [
+     "OpenAIRecipeIngredient",
+     "OpenAIRecipeInstruction",
+     "OpenAIRecipeNotes",
++    "OpenAIRecipeSummary",
+     "OpenAIText",
+ ]
+diff --git a/mealie/schema/openai/recipe_summary.py b/mealie/schema/openai/recipe_summary.py
+new file mode 100644
+index 0000000..530e6d8
+--- /dev/null
++++ b/mealie/schema/openai/recipe_summary.py
+@@ -0,0 +1,39 @@
++from typing import Literal
++
++from pydantic import Field
++
++from ._base import OpenAIBase
++
++
++class OpenAIRecipeSummary(OpenAIBase):
++    summary: str = Field(
++        ...,
++        description="A concise overview (2-4 sentences) of what the recipe is, who it suits, and what makes it distinctive.",
++    )
++
++    difficulty: Literal["easy", "medium", "hard", "unknown"] = Field(
++        ...,
++        description=(
++            "How hard the recipe is for a home cook. Use 'easy' for few steps and basic techniques, "
++            "'medium' for multiple stages or some technique, 'hard' for advanced technique or tight timing, "
++            "and 'unknown' when the recipe data is too incomplete to judge."
++        ),
++    )
++
++    estimated_time: str = Field(
++        ...,
++        description="Human readable total time from start to finish, e.g. 'about 45 minutes'. Include prep and cook time.",
++    )
++
++    highlights: list[str] = Field(
++        default_factory=list,
++        description="2-5 short bullet points describing what makes this recipe worth cooking (flavor, technique, make-ahead, etc.).",
++    )
++
++    warnings: list[str] = Field(
++        default_factory=list,
++        description=(
++            "0-5 short bullet points about things a cook should watch out for, such as missing data, "
++            "unusual ingredients, allergens, or steps that are easy to get wrong. Empty when there is nothing to flag."
++        ),
++    )
+diff --git a/mealie/schema/recipe/recipe.py b/mealie/schema/recipe/recipe.py
+index 24690c7..791a0f6 100644
+--- a/mealie/schema/recipe/recipe.py
++++ b/mealie/schema/recipe/recipe.py
+@@ -134,6 +134,7 @@ class RecipeSummary(MealieModel):
+     perform_time: str | None = None
+ 
+     description: str | None = ""
++    difficulty: str | None = None
+     recipe_category: Annotated[list[RecipeCategory] | None, Field(validate_default=True)] = []
+     tags: Annotated[list[RecipeTag] | None, Field(validate_default=True)] = []
+     tools: list[RecipeTool] = []
+diff --git a/mealie/services/openai/prompts/recipes/summarize-recipe.txt b/mealie/services/openai/prompts/recipes/summarize-recipe.txt
+new file mode 100644
+index 0000000..f6ed163
+--- /dev/null
++++ b/mealie/services/openai/prompts/recipes/summarize-recipe.txt
+@@ -0,0 +1,15 @@
++You are a practical cooking assistant embedded in a recipe manager.
++
++You receive a JSON snapshot of one saved recipe: its name, description, yield, times, tags, ingredients and instructions.
++
++Write a summary for a home cook who is deciding whether to cook this recipe tonight.
++
++Rules:
++- Base every statement on the provided data. Never invent ingredients, quantities, times, or techniques.
++- Write in the same language as the recipe name and description. If the recipe is bilingual, prefer the language of the description.
++- The summary must be 2-4 sentences of plain prose, no bullet points, no markdown.
++- Pick the difficulty that matches the number of steps, the techniques involved, and the timing pressure.
++- estimated_time must use the recipe's own time fields when present; if they are missing, estimate from the instructions and say "about" in the text.
++- highlights should focus on concrete reasons to cook it, not generic praise such as "delicious" or "easy".
++- warnings should mention missing or suspicious data (for example no ingredient quantities, missing cook time) and any step that commonly goes wrong.
++- If the recipe data is too thin to judge, return difficulty "unknown", write a short summary, and put the missing pieces in warnings.
+diff --git a/mealie/services/recipe/recipe_ai_summary_service.py b/mealie/services/recipe/recipe_ai_summary_service.py
+new file mode 100644
+index 0000000..3b67e6c
+--- /dev/null
++++ b/mealie/services/recipe/recipe_ai_summary_service.py
+@@ -0,0 +1,101 @@
++import json
++import re
++
++from mealie.schema.openai.recipe_summary import OpenAIRecipeSummary
++from mealie.schema.recipe.recipe import Recipe
++from mealie.services._base_service import BaseService
++from mealie.services.openai import OpenAIService
++from mealie.services.openai.openai import OpenAIDataInjection
++
++# Some OpenAI-compatible providers only support `{"type": "json_object"}` and reject
++# `json_schema` structured output. Models occasionally wrap JSON in a markdown fence
++# even in JSON mode, so strip it before validation.
++RE_JSON_FENCE = re.compile(r"^\s*```(?:json)?\s*|\s*```\s*$")
++
++
++class RecipeAISummaryService(BaseService):
++    """Generate a cooking summary for an existing recipe with the configured AI provider.
++
++    The summary is a read-only projection: nothing is written back to the database.
++    """
++
++    def __init__(self, openai_service: OpenAIService | None = None) -> None:
++        super().__init__()
++        self.openai_service = openai_service or OpenAIService()
++
++    @staticmethod
++    def _recipe_payload(recipe: Recipe) -> dict:
++        """Trim the recipe down to the fields the model needs.
++
++        Only data the cook can already see is sent. Internal identifiers, image paths,
++        ownership information and timestamps are deliberately excluded.
++        """
++        return {
++            "name": recipe.name,
++            "description": recipe.description,
++            "recipe_yield": recipe.recipe_yield,
++            "recipe_servings": recipe.recipe_servings,
++            "prep_time": recipe.prep_time,
++            "cook_time": recipe.cook_time,
++            "total_time": recipe.total_time,
++            "tags": [tag.name for tag in recipe.tags or []],
++            "categories": [category.name for category in recipe.recipe_category or []],
++            "ingredients": [
++                ingredient.original_text or ingredient.display or ingredient.note
++                for ingredient in recipe.recipe_ingredient
++            ],
++            "instructions": [step.text for step in recipe.recipe_instructions or []],
++        }
++
++    async def generate(self, recipe: Recipe) -> OpenAIRecipeSummary:
++        payload = self._recipe_payload(recipe)
++        prompt = self.openai_service.get_prompt(
++            "recipes.summarize-recipe",
++            [
++                OpenAIDataInjection(
++                    description="Recipe data as JSON",
++                    value=json.dumps(payload, ensure_ascii=False, indent=2),
++                )
++            ],
++        )
++        message = "Summarize the recipe included above."
++
++        try:
++            result = await self.openai_service.get_response(
++                prompt,
++                message,
++                response_schema=OpenAIRecipeSummary,
++            )
++        except Exception as e:
++            if not self._supports_json_mode_fallback(e):
++                raise
++
++            self.logger.warning(f"Structured output unavailable, falling back to JSON mode: {e}")
++            result = await self._generate_in_json_mode(prompt, message)
++
++        if result is None:
++            raise ValueError("The AI service returned an empty summary")
++
++        return result
++
++    @staticmethod
++    def _supports_json_mode_fallback(error: Exception) -> bool:
++        message = str(error).lower()
++        return "response_format" in message or "badrequest" in message
++
++    async def _generate_in_json_mode(self, prompt: str, message: str) -> OpenAIRecipeSummary:
++        client = self.openai_service.get_client()
++        response = await client.chat.completions.create(
++            messages=[
++                {"role": "system", "content": prompt},
++                {"role": "user", "content": message},
++            ],
++            model=self.openai_service.model,
++            response_format={"type": "json_object"},
++        )
++
++        if not response.choices:
++            raise ValueError("The AI service returned an empty response")
++
++        raw = RE_JSON_FENCE.sub("", response.choices[0].message.content or "")
++        return OpenAIRecipeSummary.model_validate_json(raw)

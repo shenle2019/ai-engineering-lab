@@ -1,0 +1,118 @@
+[11:17:27] INFO     Finding pydantic models...                     script.py:246
+[11:17:29] INFO     Generating JSON schema from pydantic models... script.py:253
+           INFO     Converting JSON schema to typescript           script.py:269
+                    definitions...                                              
+[11:17:30] INFO     Saved typescript definitions to                script.py:279
+                    /mnt/e/ailearning/python-luffycity/.tmp_mealie              
+                    _work/mealie/frontend/app/lib/api/types/admin.              
+                    ts.                                                         
+           INFO     Finding pydantic models...                     script.py:246
+           INFO     Generating JSON schema from pydantic models... script.py:253
+           INFO     Converting JSON schema to typescript           script.py:269
+                    definitions...                                              
+           INFO     Saved typescript definitions to                script.py:279
+                    /mnt/e/ailearning/python-luffycity/.tmp_mealie              
+                    _work/mealie/frontend/app/lib/api/types/analyt              
+                    ics.ts.                                                     
+           INFO     Finding pydantic models...                     script.py:246
+[11/11/26 11:17:32] INFO     Generating JSON schema from pydantic  script.py:253
+                             models...                                          
+                    INFO     Converting JSON schema to typescript  script.py:269
+                             definitions...                                     
+                    INFO     Saved typescript definitions to       script.py:279
+                             /mnt/e/ailearning/python-luffycity/.t              
+                             mp_mealie_work/mealie/frontend/app/li              
+                             b/api/types/cookbook.ts.                           
+                    INFO     Finding pydantic models...            script.py:246
+                    INFO     Generating JSON schema from pydantic  script.py:253
+                             models...                                          
+                    INFO     Converting JSON schema to typescript  script.py:269
+                             definitions...                                     
+[11/11/26 11:17:33] INFO     Saved typescript definitions to       script.py:279
+                             /mnt/e/ailearning/python-luffycity/.t              
+                             mp_mealie_work/mealie/frontend/app/li              
+                             b/api/types/group.ts.                              
+                    INFO     Finding pydantic models...            script.py:246
+[11/11/26 11:17:34] INFO     Generating JSON schema from pydantic  script.py:253
+                             models...                                          
+                    INFO     Converting JSON schema to typescript  script.py:269
+                             definitions...                                     
+                    INFO     Saved typescript definitions to       script.py:279
+                             /mnt/e/ailearning/python-luffycity/.t              
+                             mp_mealie_work/mealie/frontend/app/li              
+                             b/api/types/household.ts.                          
+                    INFO     Finding pydantic models...            script.py:246
+                    INFO     Generating JSON schema from pydantic  script.py:253
+                             models...                                          
+                    INFO     Converting JSON schema to typescript  script.py:269
+                             definitions...                                     
+[11/11/26 11:17:35] INFO     Saved typescript definitions to       script.py:279
+                             /mnt/e/ailearning/python-luffycity/.t              
+                             mp_mealie_work/mealie/frontend/app/li              
+                             b/api/types/labels.ts.                             
+                    INFO     Finding pydantic models...            script.py:246
+                    INFO     Generating JSON schema from pydantic  script.py:253
+                             models...                                          
+                    INFO     Converting JSON schema to typescript  script.py:269
+                             definitions...                                     
+[11/11/26 11:17:36] INFO     Saved typescript definitions to       script.py:279
+                             /mnt/e/ailearning/python-luffycity/.t              
+                             mp_mealie_work/mealie/frontend/app/li              
+                             b/api/types/meal-plan.ts.                          
+                    INFO     Finding pydantic models...            script.py:246
+                    INFO     Generating JSON schema from pydantic  script.py:253
+                             models...                                          
+                    INFO     Converting JSON schema to typescript  script.py:269
+                             definitions...                                     
+                    INFO     Saved typescript definitions to       script.py:279
+                             /mnt/e/ailearning/python-luffycity/.t              
+                             mp_mealie_work/mealie/frontend/app/li              
+                             b/api/types/openai.ts.                             
+                    INFO     Finding pydantic models...            script.py:246
+                    INFO     Generating JSON schema from pydantic  script.py:253
+                             models...                                          
+                    INFO     Converting JSON schema to typescript  script.py:269
+                             definitions...                                     
+[11/11/26 11:17:37] INFO     Saved typescript definitions to       script.py:279
+                             /mnt/e/ailearning/python-luffycity/.t              
+                             mp_mealie_work/mealie/frontend/app/li              
+                             b/api/types/recipe.ts.                             
+                    INFO     Finding pydantic models...            script.py:246
+                    INFO     Generating JSON schema from pydantic  script.py:253
+                             models...                                          
+                    INFO     Converting JSON schema to typescript  script.py:269
+                             definitions...                                     
+                    INFO     Saved typescript definitions to       script.py:279
+                             /mnt/e/ailearning/python-luffycity/.t              
+                             mp_mealie_work/mealie/frontend/app/li              
+                             b/api/types/reports.ts.                            
+                    INFO     Finding pydantic models...            script.py:246
+                    INFO     Generating JSON schema from pydantic  script.py:253
+                             models...                                          
+                    INFO     Converting JSON schema to typescript  script.py:269
+                             definitions...                                     
+[11/11/26 11:17:38] INFO     Saved typescript definitions to       script.py:279
+                             /mnt/e/ailearning/python-luffycity/.t              
+                             mp_mealie_work/mealie/frontend/app/li              
+                             b/api/types/response.ts.                           
+                    INFO     Finding pydantic models...            script.py:246
+                    WARNING  Secrets directory '/run/secrets'     settings.py:77
+                             does not exist                                     
+                    INFO     Generating JSON schema from pydantic  script.py:253
+                             models...                                          
+                    INFO     Converting JSON schema to typescript  script.py:269
+                             definitions...                                     
+[11/11/26 11:17:39] INFO     Saved typescript definitions to       script.py:279
+                             /mnt/e/ailearning/python-luffycity/.t              
+                             mp_mealie_work/mealie/frontend/app/li              
+                             b/api/types/user.ts.                               
+[skip] subprocess.run -> ['yarn', 'lint', '--fix', '/mnt/e/ailearning/python-luffycity/.tmp_mealie_work/mealie/frontend/app/lib/api/types/admin.ts', '/mnt/e/ailearning/python-luffycity/.tmp_mealie_work/mealie/frontend/app/lib/api/types/analytics.ts', '/mnt/e/ailearning/python-luffycity/.tmp_mealie_work/mealie/frontend/app/lib/api/types/cookbook.ts', '/mnt/e/ailearning/python-luffycity/.tmp_mealie_work/mealie/frontend/app/lib/api/types/group.ts', '/mnt/e/ailearning/python-luffycity/.tmp_mealie_work/mealie/frontend/app/lib/api/types/household.ts', '/mnt/e/ailearning/python-luffycity/.tmp_mealie_work/mealie/frontend/app/lib/api/types/labels.ts', '/mnt/e/ailearning/python-luffycity/.tmp_mealie_work/mealie/frontend/app/lib/api/types/meal-plan.ts', '/mnt/e/ailearning/python-luffycity/.tmp_mealie_work/mealie/frontend/app/lib/api/types/openai.ts', '/mnt/e/ailearning/python-luffycity/.tmp_mealie_work/mealie/frontend/app/lib/api/types/recipe.ts', '/mnt/e/ailearning/python-luffycity/.tmp_mealie_work/mealie/frontend/app/lib/api/types/reports.ts', '/mnt/e/ailearning/python-luffycity/.tmp_mealie_work/mealie/frontend/app/lib/api/types/response.ts', '/mnt/e/ailearning/python-luffycity/.tmp_mealie_work/mealie/frontend/app/lib/api/types/user.ts']
+                    DEBUG                                    gen_ts_types.py:222
+                             📁 Skipped Directories:                            
+                    DEBUG       📁 static                    gen_ts_types.py:224
+                    DEBUG       📁 _mealie                   gen_ts_types.py:224
+                    DEBUG       📁 __pycache__               gen_ts_types.py:224
+                    DEBUG    📄 Skipped Files:               gen_ts_types.py:226
+                    DEBUG       📄 make_dependable.py        gen_ts_types.py:228
+                    DEBUG       📄 mapper.py                 gen_ts_types.py:228
+                    DEBUG       📄 __init__.py               gen_ts_types.py:228

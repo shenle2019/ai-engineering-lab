@@ -1,0 +1,9 @@
+[11/11/26 10:14:34] WARNING  Secrets directory '/run/secrets'     settings.py:77
+                             does not exist                                     
+                    INFO     Context impl SQLiteImpl.           migration.py:210
+                    INFO     Will assume non-transactional DDL. migration.py:213
+[11/11/26 10:15:16] INFO     Running upgrade 4395a04f7784 ->    migration.py:621
+                             fc7cdab5b7a2, add recipe                           
+                             difficulty                                         
+                    DEBUG    update 4395a04f7784 to             migration.py:816
+                             fc7cdab5b7a2                                       
