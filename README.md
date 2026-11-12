@@ -2,7 +2,7 @@
 
 Python 山顶会三期的学习仓库：**课件笔记** + **实操复刻记录** 两条线并行。
 
-- `notes/`：从课件提炼的知识笔记，文件名以 `01-`～`16-` 前缀标出学习顺序，只记录理解，不复刻代码
+- `notes/`：从课件提炼的知识笔记，文件名以 `01-`～`17-` 前缀标出学习顺序，只记录理解，不复刻代码
 - `hands-on/`：按课件自己重写并跑通的实操，目录名同样带顺序前缀，每个实操一个子目录，附带源码、脚本和运行日志
 
 ## 课程地图与进度
@@ -28,7 +28,7 @@ Python 山顶会三期的学习仓库：**课件笔记** + **实操复刻记录*
 | LangGraph | day14 | LangGraph 核心架构模式和子图 | 14-LangGraph工作流架构模式与子图.md | 同上 |
 | LangGraph | day15 | LangGraph 之子图 / 记忆 / 中断 / 持久化 | 15-LangGraph记忆-中断与持久化.md | 同上 |
 | LangGraph | day16 | LangGraph 之时间旅行 / 流式处理 / 持久执行 | 16-LangGraph时间旅行-流式处理与持久执行.md | 同上 |
-| 工程化 | day17 | Skill 从入门到精通 | 待做 | 待做 |
+| 工程化 | day17 | Skill 从入门到精通 | 17-Agent-Skill规范与DeepAgent集成.md | 待做 |
 
 ## 已完成内容
 
@@ -52,6 +52,7 @@ Python 山顶会三期的学习仓库：**课件笔记** + **实操复刻记录*
 | [notes/14-LangGraph工作流架构模式与子图.md](notes/14-LangGraph工作流架构模式与子图.md) | day14：LLM 增强三件套；六种工作流模式 + Agent 逐个讲（提示链 gate、并行化聚合、`with_structured_output(Literal)` 路由、`Send` 动态 fan-out 编排者-工作者、评估者-优化器回边循环、ReAct）；模式选型速查表；子图两种挂法（节点内 `invoke` 自定义转换 vs `add_node(name, subgraph)` 共享 state）与选择依据、`xray=True` 可视化 |
 | [notes/15-LangGraph记忆-中断与持久化.md](notes/15-LangGraph记忆-中断与持久化.md) | day15：子图持久化（透传 thread_id / 继承 vs 独立）与子图流式（`subgraphs=True`）；短期 vs 长期记忆对比表、五种 checkpointer 后端差异（`setup()`、`check_same_thread`、上下文管理器）、长期记忆 `Runtime` + `context_schema` + namespace put/search；短期记忆四种管理法（trim / RemoveMessage / langmem 总结 / 检查点运维）；`interrupt()` + `Command(resume=)` 机制、四种常见模式、六条铁律（不 catch、顺序稳、值可序列化、副作用幂等…）；持久化两大组件与 `interrupt_before` 静态断点 |
 | [notes/16-LangGraph时间旅行-流式处理与持久执行.md](notes/16-LangGraph时间旅行-流式处理与持久执行.md) | day16：静态断点改 `interrupt()` 动态中断的对比；时间旅行三动作（`get_state_history` 找快照 → `invoke(None, snapshot.config)` 重放 → `update_state` + `as_node` 建分支）、中断场景重放会再触发 interrupt、多中断表单、子图时间旅行粒度（继承父图 vs `checkpointer=True` + `get_state(config, subgraphs=True)`）；流式两粒度（节点级 / `stream_mode="messages"` 按 `langgraph_node` 过滤）与 HITL 混合流；持久执行（崩溃恢复 `invoke(None)`、`email_sent` 精确一次、故障续跑） |
+| [notes/17-Agent-Skill规范与DeepAgent集成.md](notes/17-Agent-Skill规范与DeepAgent集成.md) | day17：Skill 定位（function calling → MCP → Skill 的三层上移）与四条好处；目录结构与 `SKILL.md` 两段式（YAML `name`/`description` 决定加载、Markdown 正文四块）、kebab-case 命名硬规则；三个递进案例（纯指令型月报、指令+脚本型 PDF 合并、CLI 型天气/邮件，含 SMTP 主机端口与授权码坑）；Trae 导入（全局 vs 项目）；LangChain/LangGraph/DeepAgent 三层定位与 `create_deep_agent` 的 `backend`/`skills`/`checkpointer` 三参数；LangGraph 无原生支持时把说明书塞进 tool 或 prompt 的等价做法；模型支持度与副作用技能自校验 |
 
 ### 实操
 
@@ -92,7 +93,7 @@ Python 山顶会三期的学习仓库：**课件笔记** + **实操复刻记录*
 
 ## 约定
 
-- 笔记文件按知识点命名，用 `01-`～`16-` 数字前缀表示学习顺序，不带 `dayXX`、`预习X` 这类课次前缀
+- 笔记文件按知识点命名，用 `01-`～`17-` 数字前缀表示学习顺序，不带 `dayXX`、`预习X` 这类课次前缀
 - 实操目录按关键知识点命名，同样带顺序前缀（`01-`、`02-`、`03-`、`04-`、`05-`），一个实操一个子目录，内含源码、脚本、日志
 - 只记录真跑通的内容；没跑起来的部分在对应 README 里写明现象与已尝试步骤
 - 目录名统一英文 kebab-case，避免中文路径在 URL 中被编码
