@@ -1,0 +1,10 @@
+# 本目录产生的运行产物与本地环境不入库
+.venv/
+__pycache__/
+*.pyc
+.env
+# 巡检报告由脚本生成，每次内容随机器变化
+reports/*.md
+!reports/.gitkeep
+# 安装/运行日志
+pip_install.log

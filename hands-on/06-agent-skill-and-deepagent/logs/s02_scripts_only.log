@@ -1,0 +1,55 @@
+﻿
+=== 磁盘技能：正常调用 ===
+命令: E:\ailearning\python-luffycity\ai-engineering-lab\hands-on\06-agent-skill-and-deepagent\skills\disk-usage\disk_usage.py --path E:\ailearning\python-luffycity\ai-engineering-lab\hands-on\06-agent-skill-and-deepagent --top 5
+退出码: 0 | 预期: 成功
+  [disk-usage] 目 录: E:\ailearning\python-luffycity\ai-engineering-lab\hands-on\06-agent-skill-and-deepagent
+  [disk-usage] 所 在 盘: 总 188.2 GB / 已用 169.6 GB / 剩余 18.6 GB (90.1% 已用)
+  [disk-usage] 子目录占用 Top 5:
+    1. .venv                        140.5 MB
+    2. logs                         36.5 KB
+    3. stages                       22.4 KB
+    4. skills                       13.9 KB
+    5. reports                      2.0 KB
+结论: PASS
+
+=== 磁盘技能：路径不存在 ===
+命令: E:\ailearning\python-luffycity\ai-engineering-lab\hands-on\06-agent-skill-and-deepagent\skills\disk-usage\disk_usage.py --path E:\ailearning\python-luffycity\ai-engineering-lab\hands-on\06-agent-skill-and-deepagent\no-such-dir
+退出码: 2 | 预期: 失败
+  [disk-usage] 目录不存在: E:\ailearning\python-luffycity\ai-engineering-lab\hands-on\06-agent-skill-and-deepagent\no-such-dir
+结论: PASS
+
+=== 日志技能：扫样例日志 ===
+命令: E:\ailearning\python-luffycity\ai-engineering-lab\hands-on\06-agent-skill-and-deepagent\skills\log-scan\log_scan.py --path E:\ailearning\python-luffycity\ai-engineering-lab\hands-on\06-agent-skill-and-deepagent\samples\app.log --level ERROR
+退出码: 0 | 预期: 成功
+  [log-scan] 文件数: 1  路径: E:\ailearning\python-luffycity\ai-engineering-lab\hands-on\06-agent-skill-and-deepagent\samples\app.log
+  [log-scan] 各等级条数: CRITICAL=1, ERROR=3, INFO=15, WARN=5
+  [log-scan] ERROR 样例 3 条:
+    | 2026-11-12 09:12:33 ERROR app.api      请求 /api/orders 超时：upstream timed out after 3000ms
+    | 2026-11-12 09:12:34 ERROR app.api      请求 /api/orders 重试失败：connection reset by peer
+    | 2026-11-12 09:26:12 ERROR app.payment  支付回调验签失败：order=SO20261112003
+  [log-scan] ERROR 总数: 3
+结论: PASS
+
+=== 日志技能：缺必填参数 ===
+命令: E:\ailearning\python-luffycity\ai-engineering-lab\hands-on\06-agent-skill-and-deepagent\skills\log-scan\log_scan.py
+退出码: 2 | 预期: 失败
+  usage: log_scan.py [-h] --path PATH [--level LEVEL] [--limit LIMIT]
+                     [--ext EXT]
+  log_scan.py: error: the following arguments are required: --path
+结论: PASS
+
+=== 运行时技能：端口与变量 ===
+命令: E:\ailearning\python-luffycity\ai-engineering-lab\hands-on\06-agent-skill-and-deepagent\skills\env-check\env_check.py --ports 2024,65000 --env DEEPSEEK_API_KEY,NO_SUCH_VAR
+退出码: 0 | 预期: 成功
+  [env-check] Python: 3.11.9 (64bit)
+  [env-check] 系统: Windows 10
+  [env-check] 端口 127.0.0.1:2024 -> 未监听
+  [env-check] 端口 127.0.0.1:65000 -> 未监听
+  [env-check] 环境变量 DEEPSEEK_API_KEY -> 已设置
+  [env-check] 环境变量 NO_SUCH_VAR -> 未设置
+结论: PASS
+
+--------------------------------------------------------------------
+[s02] 汇总：5 个检查，通过 5，失败 0
+[s02] OK：三个脚本技能在正常与异常路径上都符合预期
+

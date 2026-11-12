@@ -28,7 +28,7 @@ Python 山顶会三期的学习仓库：**课件笔记** + **实操复刻记录*
 | LangGraph | day14 | LangGraph 核心架构模式和子图 | 14-LangGraph工作流架构模式与子图.md | 同上 |
 | LangGraph | day15 | LangGraph 之子图 / 记忆 / 中断 / 持久化 | 15-LangGraph记忆-中断与持久化.md | 同上 |
 | LangGraph | day16 | LangGraph 之时间旅行 / 流式处理 / 持久执行 | 16-LangGraph时间旅行-流式处理与持久执行.md | 同上 |
-| 工程化 | day17 | Skill 从入门到精通 | 17-Agent-Skill规范与DeepAgent集成.md | 待做 |
+| 工程化 | day17 | Skill 从入门到精通 | 17-Agent-Skill规范与DeepAgent集成.md | 06-agent-skill-and-deepagent |
 
 ## 已完成内容
 
@@ -63,6 +63,7 @@ Python 山顶会三期的学习仓库：**课件笔记** + **实操复刻记录*
 | [hands-on/03-langchain-agent-engineering](hands-on/03-langchain-agent-engineering) | 把 day03–day07 串成一条电商售后客服案例：Agents/Models/Messages 基础 → 四种流式模式与结构化输出纠错 → ToolRuntime/短期记忆/PII 与自定义护栏 → FastMCP 工具经 MCP 接入 → HITL 退款审批 → 中间件与长期记忆与上下文工程 → 两种多智能体做法 → 综合案例（护栏+双记忆+HITL+多智能体+流式+工单结构化输出） | 本机 Windows + Python 3.11.9 + LangChain 1.4.9 + DeepSeek 真跑，7 个阶段脚本 + 1 个综合案例 + 8 份运行日志存于目录内 |
 | [hands-on/04-mealie-second-dev-and-prod-deploy](hands-on/04-mealie-second-dev-and-prod-deploy) | 把 day08–day12 串成一条 Mealie 二次开发链路：字段扩展 difficulty（迁移→ORM→Schema→路由→前端）→ AI 摘要接口（OpenAIRecipeSummary + Prompt + DeepSeek JSON 模式降级 + 前端卡片）→ 生产部署（多阶段 Dockerfile + Compose 三容器 + nginx 反代 + 重启不丢数据 + pg_dump） | 本机 WSL2 Ubuntu 24.04 + Docker 29.1.3 + PostgreSQL 15 + Nuxt 4 真跑：镜像构建 52 步成功、三容器 healthy、difficulty 与 AI 摘要走 nginx 全链路 200、12 份日志 + 完整改动 patch 存于目录内 |
 | [hands-on/05-langgraph-orchestration](hands-on/05-langgraph-orchestration) | 把 day13–day16 串成一条「AI 行程管家」链路：并行规划（fan-out + 汇聚）→ 逐日子图 → 预算评估与优化回边 → interrupt 人工审批 → 长期画像沉淀，外加七种工作流模式、两套 API、子图两挂法、短期/长期记忆、时间旅行（重放/分支/子图粒度）、三种流式读法、SQLite 崩溃续跑与 `langgraph dev` 服务化 | 本机 Windows + Python 3.11.9 + langgraph 1.2.20 + DeepSeek 真跑：10 个阶段脚本 + 综合案例（含 `--stream` / `--resume` / `--fork-budget` 三条分支）+ HTTP 服务链路全部通过，日志与图结构存于目录内；过程中修掉 DeepSeek `response_format`、Literal schema、Windows 下 `langgraph dev` 解码等 13 个坑 |
+| [hands-on/06-agent-skill-and-deepagent](hands-on/06-agent-skill-and-deepagent) | 把 day17 串成一套能跑的本机运维技能集：4 个 `SKILL.md`（磁盘 / 日志 / 端口 / 报告，含一个纯指令型）+ 3 个脚本，挂到 DeepAgent 上做「自检 → 采集 → 报告落盘」一条链路，另设边界阶段专测技能覆盖不到时会不会编 | 本机 Windows + Python 3.11.9 + deepagents 0.7.35 + DeepSeek 真跑：5 个阶段脚本 + 综合案例全部通过（s03 三次调用、s04 十二次、s05 八次），日志存于目录内；纠正课件 `FilesystemBackend` 跑不了脚本，另修掉 `virtual_mode` 路径错位、`inherit_env=False` 导致 Windows socket 崩溃等 6 个坑 |
 
 ## 运行环境
 
@@ -89,11 +90,12 @@ Python 山顶会三期的学习仓库：**课件笔记** + **实操复刻记录*
 | fastmcp | 2.14.7（`fastmcp<3`，function-calling-and-fastmcp 用） |
 | LangChain / LangGraph | langchain 1.4.9、langgraph 1.2.20、langchain-mcp-adapters 0.3.2、mcp 1.30.0（langchain-agent-engineering 用）；langchain-core 1.7.7、langchain-openai 1.7.4、langgraph-checkpoint 4.3.1 + langgraph-checkpoint-sqlite 3.1.3、langgraph-cli 0.4.42（langgraph-orchestration 用） |
 | LLM | DeepSeek `deepseek-chat`（OpenAI 兼容），key 只走环境变量 |
+| deepagents | 0.7.35（`LocalShellBackend` 需 `inherit_env=True`，Windows 上否则 socket 崩）；安装源用阿里云（清华源 403） |
 | 外部数据 | 东方财富公开行情接口（匿名、只读、低频） |
 
 ## 约定
 
 - 笔记文件按知识点命名，用 `01-`～`17-` 数字前缀表示学习顺序，不带 `dayXX`、`预习X` 这类课次前缀
-- 实操目录按关键知识点命名，同样带顺序前缀（`01-`、`02-`、`03-`、`04-`、`05-`），一个实操一个子目录，内含源码、脚本、日志
+- 实操目录按关键知识点命名，同样带顺序前缀（`01-`、`02-`、`03-`、`04-`、`05-`、`06-`），一个实操一个子目录，内含源码、脚本、日志
 - 只记录真跑通的内容；没跑起来的部分在对应 README 里写明现象与已尝试步骤
 - 目录名统一英文 kebab-case，避免中文路径在 URL 中被编码
